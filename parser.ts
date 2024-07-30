@@ -1,6 +1,6 @@
 import { Rule, Statement, CompareStatement } from './ast';
+import { Token } from './token';
 import Lexer from './lexer';
-import Token from './token';
 
 export class Parser {
   lexer: Lexer;
@@ -31,16 +31,16 @@ export class Parser {
   }
 
   private parseStatement(): Statement | undefined {
-    switch (this.curToken.type) {
-      case 'rule':
+    switch (this.curToken!.type) {
+      case '':
         return this.parseRuleStatement();
       default:
         return;
     }
   }
 
-  private parseRuleStatement(): CompareStatement | undefined {
-    const statement = new CompareStatement();
+  private parseRuleStatement(): Statement {
+
   }
 }
 
