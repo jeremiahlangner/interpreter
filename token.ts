@@ -1,4 +1,3 @@
-
 export const tokens: Record<string, Token> = {
   ',': { type: 'comma', literal: ',' },
   '[': { type: 'lbracket', literal: '[' },
@@ -12,6 +11,9 @@ export const tokens: Record<string, Token> = {
   '>': { type: 'greaterthan', literal: '>' },
   '>=': { type: 'greaterthanorequal', literal: '>=' },
   '<=': { type: 'lessthanorequal', literal: '<=' },
+  '*': { type: 'multiply', literal: '*' },
+  '/': { type: 'divide', literal: '/' },
+  '"': { type: 'quote', literal: '"' },
 };
 
 export const keywords: Record<string, Token> = {
@@ -19,13 +21,11 @@ export const keywords: Record<string, Token> = {
   'not': { type: 'not', literal: 'not' },
   'in': { type: 'in', literal: 'in' },
   'or': { type: 'or', literal: 'or' },
+  'true': { type: 'boolean', literal: 'true' },
+  'false': { type: 'boolean', literal: 'false' },
 };
 
-export default class Token {
+export interface Token {
   type: string | undefined;
   literal: string | undefined;
-
-  constructor() {
-  }
 }
-
