@@ -45,12 +45,14 @@ export default class Lexer {
       }
     } else if (this.ch === '') {
       return;
+    } else if (this.ch === '"') {
+      token = { type: 'string', literal: this.readString() };
     } else if (letter(this.ch)) {
       const literal = this.readIdentifier();
       const type = this.lookupKeyword(literal);
       token = { type, literal };
     } else if (digit(this.ch)) {
-      token = { type: 'digit', literal: this.readNumber() };
+      token = { type: 'number', literal: this.readNumber() };
     } else {
       throw Error(`Token not identifiable at position ${this.position}`);
     }
@@ -64,7 +66,10 @@ export default class Lexer {
     while (letter(this.ch)) {
       this.readChar();
     }
-    return this.input.slice(position, this.position);
+    const ident = this.input.slice(position, this.position); 
+    this.position--;
+    this.readPosition--;
+    return ident; 
   }
 
   private readNumber(): string {
@@ -72,7 +77,18 @@ export default class Lexer {
     while (digit(this.ch)) {
       this.readChar();
     }
-    return this.input.slice(position, this.position);
+    const num = this.input.slice(position, this.position);
+    this.position--;
+    this.readPosition--;
+    return num;
+  }
+
+  private readString(): string {
+    const position = this.position;
+    do {
+      this.readChar()
+    } while(this.ch !== '"');
+    return this.input.slice(position, this.readPosition);
   }
 
   private skipWs() {

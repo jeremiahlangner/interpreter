@@ -13,7 +13,6 @@ export const tokens: Record<string, Token> = {
   '<=': { type: 'lessthanorequal', literal: '<=' },
   '*': { type: 'multiply', literal: '*' },
   '/': { type: 'divide', literal: '/' },
-  '"': { type: 'quote', literal: '"' },
 };
 
 export const keywords: Record<string, Token> = {
