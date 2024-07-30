@@ -47,14 +47,14 @@ export default class Lexer {
       return;
     } else if (letter(this.ch)) {
       const ch = this.peekChar();
-      if (letter(ch as string)) {
+      if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
         const literal = this.readIdentifier();
         const type = this.lookupKeyword(literal);
         token = { type, literal };
       }
     } else if (digit(this.ch)) {
       const ch = this.peekChar();
-      if (digit(ch as string)) {
+      if (digit(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
         token = { type: 'number', literal: this.readNumber() };
       }
     } else {
@@ -88,7 +88,7 @@ export default class Lexer {
   }
 
   private skipWs() {
-    while (this.ch === ' ' || this.ch === '\t' || this.ch === '\n' || this.ch === '\r') {
+    while (ws(this.ch)) {
       this.readChar();
     }
   }
@@ -107,11 +107,15 @@ export default class Lexer {
   }
 }
 
-function letter(input: string): boolean {
-  return 'a' <= input && input <= 'z' || 'A' <= input && input <= 'Z' || input == '_' || input === '.';
+function ws(ch: string): boolean {
+  return ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r' ;
 }
 
-function digit(input: string): boolean {
-  return '0' <= input && input <= '9' || input === '.';
+function letter(ch: string): boolean {
+  return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch === '.';
+}
+
+function digit(ch: string): boolean {
+  return '0' <= ch && ch <= '9' || ch === '.';
 }
 

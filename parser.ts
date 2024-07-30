@@ -7,6 +7,9 @@ export class Parser {
   curToken: Token | undefined;
   peekToken: Token | undefined;
 
+  prefixFns: any[] = [];
+  infixFns: any[] = [];
+
   constructor(lexer: Lexer) {
     this.lexer = lexer;
     this.nextToken();
@@ -18,6 +21,7 @@ export class Parser {
     this.peekToken = this.lexer.nextToken();
   }
 
+  // Rules consist of a single statement; statement may be recursive
   public parseRule(): Rule | undefined {
     const rule = new Rule();
 
@@ -39,9 +43,6 @@ export class Parser {
     }
   }
 
-  private parseRuleStatement(): Statement {
-
-  }
 }
 
 // assertions / logging
