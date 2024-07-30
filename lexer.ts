@@ -48,11 +48,17 @@ export default class Lexer {
     } else if (this.ch === '"') {
       token = { type: 'string', literal: this.readString() };
     } else if (letter(this.ch)) {
-      const literal = this.readIdentifier();
-      const type = this.lookupKeyword(literal);
-      token = { type, literal };
+      const ch = this.peekChar();
+      if (letter(ch as string)) {
+        const literal = this.readIdentifier();
+        const type = this.lookupKeyword(literal);
+        token = { type, literal };
+      }
     } else if (digit(this.ch)) {
-      token = { type: 'number', literal: this.readNumber() };
+      const ch = this.peekChar();
+      if (digit(ch as string)) {
+        token = { type: 'number', literal: this.readNumber() };
+      }
     } else {
       throw Error(`Token not identifiable at position ${this.position}`);
     }
@@ -112,7 +118,7 @@ export default class Lexer {
 }
 
 function letter(input: string): boolean {
-  return 'a' <= input && input <= 'z' || 'A' <= input && input <= 'Z' || input == '_';
+  return 'a' <= input && input <= 'z' || 'A' <= input && input <= 'Z' || input == '_' || input === '.';
 }
 
 function digit(input: string): boolean {
