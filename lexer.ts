@@ -1,14 +1,21 @@
-import Token from './token';
-import { tokens, keywords } from './token';
+import { Token, tokens, keywords } from './token';
 
 export default class Lexer {
+  ch: string;
   input: string;
   position: number = 0;
   readPosition: number = 0;
-  ch: string;
 
-  constructor(input: string) {
+  constructor() {
+    this.ch = '';
+    this.input = '';
+  }
+
+  public lex(input: string) {
+    this.ch = '';
     this.input = input;
+    this.position = 0;
+    this.readPosition = 0;
     this.readChar();
   }
 
@@ -22,7 +29,7 @@ export default class Lexer {
     this.readPosition += 1;
   }
 
-  public nextToken(): string | Token | undefined {
+  public nextToken(): Token | undefined {
     let token;
 
     this.skipWs();

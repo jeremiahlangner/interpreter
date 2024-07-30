@@ -7,10 +7,12 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+    
+const lexer = new Lexer();
 
 function getInput() {
   rl.question(Prompt, line => {
-    const lexer = new Lexer(line);
+    lexer.lex(line);
 
     let token;
     do {
