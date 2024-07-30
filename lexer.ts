@@ -45,8 +45,6 @@ export default class Lexer {
       }
     } else if (this.ch === '') {
       return;
-    } else if (this.ch === '"') {
-      token = { type: 'string', literal: this.readString() };
     } else if (letter(this.ch)) {
       const ch = this.peekChar();
       if (letter(ch as string)) {
@@ -87,14 +85,6 @@ export default class Lexer {
     this.position--;
     this.readPosition--;
     return num;
-  }
-
-  private readString(): string {
-    const position = this.position;
-    do {
-      this.readChar()
-    } while(this.ch !== '"');
-    return this.input.slice(position, this.readPosition);
   }
 
   private skipWs() {
