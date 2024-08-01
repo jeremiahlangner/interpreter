@@ -45,6 +45,8 @@ export default class Lexer {
       }
     } else if (this.ch === '') {
       return;
+    } else if (this.ch === '"') {
+      token = { type: 'string', literal: this.readString() };
     } else if (letter(this.ch)) {
       const ch = this.peekChar();
       if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
@@ -58,7 +60,8 @@ export default class Lexer {
         token = { type: 'number', literal: this.readNumber() };
       }
     } else {
-      throw Error(`Token not identifiable at position ${this.position}`);
+      console.log('Syntax Error at position:', this.position);
+      console.log('- Unrecognized character:', this.ch);
     }
 
     this.readChar();
@@ -91,6 +94,15 @@ export default class Lexer {
     while (ws(this.ch)) {
       this.readChar();
     }
+  }
+
+  private readString(): string {
+    const position = this.position;
+    do {
+      this.readChar();
+      console.log(this.ch);
+    } while(this.ch !== '"' && this.readPosition < this.input.length);
+    return this.input.slice(position + 1, this.ch == '"' ? this.position : this.readPosition);
   }
 
   private peekChar(): string | undefined {

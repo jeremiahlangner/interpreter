@@ -1,5 +1,11 @@
 import { Token } from './token';
 
+/*
+  *
+  * Ok, so we need a few things: Identifiers, Statements, Expressions. We aren't
+* doing assignment, and we only ever return a boolean after evaluation.
+  * */
+
 type Node =  {
   tokenLiteral: string,
 }
@@ -23,14 +29,6 @@ interface ExpressionStatement extends Statement {
 type Identifier = {
   token: Token,
   value: string,
-}
-
-// probably unnecessary; TODO remove when ready.
-interface CompareStatement extends Node {
-  node: Node;
-  token: Token;
-  name: Identifier;
-  value: Expression;
 }
 
 class Rule {

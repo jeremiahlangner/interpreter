@@ -1,10 +1,11 @@
 import { Rule, Statement } from './ast';
 import { Token } from './token';
 import Lexer from './lexer';
+import eval from './eval';
 
+// TODO: add precedence
 const precedence: Record<string, number> = {
   'lowest': 0,
-
 };
 
 export class Parser {
@@ -34,17 +35,11 @@ export class Parser {
       case 'boolean':
         if (!this.nextToken) {
           // TODO: eval
-          return this.eval(this.curToken!.literal!);
         }
     }
 
     // default return; rule doesn't exist
     return false;
-  }
-
-  public eval(str: string) {
-    if (str === 'false') return false;
-    return true;
   }
 }
 
