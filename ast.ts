@@ -1,54 +1,37 @@
 import { Token } from './token';
 
-/*
-  *
-  * Ok, so we need a few things: Identifiers, Statements, Expressions. We aren't
-* doing assignment, and we only ever return a boolean after evaluation.
-  * */
-
-type Node =  {
+type Node = {
   tokenLiteral: string,
 }
 
-interface Statement extends Node {
-  node: Node,
-  statementNode: Node,
+interface Statement extends Node { }
+
+interface Expression extends Node { }
+
+class Identifier {
+  token: Token;
+  value: string;
+  expression: Expression;
+
+  constructor(token: Token, expression: Expression) {
+    this.token = token;
+    this.value = token.literal!;
+    this.expression = expression;
+  }
 }
 
-interface Expression extends Node {
-  node: Node,
-  expressionNode: Node,
-}
-
-interface ExpressionStatement extends Statement {
-  token: Token,
-  expression: Expression,
-}
-
-// for data/data assignment later on
-type Identifier = {
-  token: Token,
-  value: string,
-}
-
+// root ast node.
 class Rule {
   statements: Statement[] = [];
-  
-  tokenLiteral(): string {
-    if(this.statements.length > 0) {
+
+  literal(): string {
+    if (this.statements.length > 0) {
       return this.statements[0].tokenLiteral;
     } else {
-      return ''
+      return '';
     }
-  }
-
-  toString(): string {
-    let out: string = '';
-    for (const s of this.statements) {
-      out += s.toString();
-    }
-    return out;
   }
 }
 
-export { Rule, CompareStatement, Statement }
+
+export { Rule, Statement, Identifier }

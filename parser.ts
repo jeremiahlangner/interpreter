@@ -1,12 +1,6 @@
 import { Rule, Statement } from './ast';
 import { Token } from './token';
 import Lexer from './lexer';
-import eval from './eval';
-
-// TODO: add precedence
-const precedence: Record<string, number> = {
-  'lowest': 0,
-};
 
 export class Parser {
   lexer: Lexer;
@@ -28,8 +22,10 @@ export class Parser {
     this.peekToken = this.lexer.nextToken();
   }
 
-  // Rules are expressions; either as identifiers 
   public parseRule(): boolean {
+    const rule = new Rule();
+
+    while (this.curToken.type !== 'EOF') {
     // expression parser
     switch (this.curToken!.type) {
       case 'boolean':

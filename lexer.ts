@@ -100,7 +100,6 @@ export default class Lexer {
     const position = this.position;
     do {
       this.readChar();
-      console.log(this.ch);
     } while(this.ch !== '"' && this.readPosition < this.input.length);
     return this.input.slice(position + 1, this.ch == '"' ? this.position : this.readPosition);
   }
