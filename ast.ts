@@ -1,12 +1,9 @@
 import { Token } from './token';
 
 type Node = {
-  tokenLiteral: string,
+  token: Token,
+  toString(): string,
 }
-
-interface Statement extends Node { }
-
-interface Expression extends Node { }
 
 class Identifier {
   token: Token;
@@ -18,15 +15,44 @@ class Identifier {
     this.value = token.literal!;
     this.expression = expression;
   }
+
+  toString(): string {
+    return this.token.literal!;
+  }
 }
+
+interface Statement extends Node { }
+
+interface Expression extends Node { }
+
+class ExpressionStatement {
+  expression: Expression;
+
+  constructor(expression: Expression) {
+    this.expression = expression;
+  }
+
+  toString() {
+    return this.expression.toString();
+  }
+}
+
 
 // root ast node.
 class Rule {
   statements: Statement[] = [];
 
-  literal(): string {
+  toString(): string {
+    let out = '';
+    for (const s of this.statements) {
+      out += s.toString();
+    }
+    return out;
+  }
+  
+  get literal(): string {
     if (this.statements.length > 0) {
-      return this.statements[0].tokenLiteral;
+      return this.statements[0].token.literal!;
     } else {
       return '';
     }

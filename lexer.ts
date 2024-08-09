@@ -1,15 +1,10 @@
-import { Token, tokens, keywords } from './token';
+import { Token, Keyword, KeywordMap, TokenMap } from './token';
 
 export default class Lexer {
-  ch: string;
-  input: string;
+  ch: string = '';
+  input: string = '';
   position: number = 0;
   readPosition: number = 0;
-
-  constructor() {
-    this.ch = '';
-    this.input = '';
-  }
 
   public lex(input: string) {
     this.ch = '';
@@ -29,19 +24,19 @@ export default class Lexer {
     this.readPosition += 1;
   }
 
-  public nextToken(): Token | undefined {
-    let token;
+  public nextToken(): Extract<Token | Keyword, {type: string}> | undefined {
+    let token: Extract<Token | Keyword, { type: string }> | undefined;
 
     this.skipWs();
 
-    if (this.ch in tokens) {
+    if (this.ch in TokenMap) {
       const ch = this.peekChar();
-      if (`${this.ch}${ch}` in tokens) {
+      if (`${this.ch}${ch}` in TokenMap) {
         const position = this.position;
         this.readChar();
-        token = tokens[this.input.slice(position, this.position + 1)];
+        token = TokenMap[this.input.slice(position, this.position + 1)];
       } else {
-        token = tokens[this.ch];
+        token = TokenMap[this.ch];
       }
     } else if (this.ch === '') {
       return;
@@ -51,8 +46,11 @@ export default class Lexer {
       const ch = this.peekChar();
       if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
         const literal = this.readIdentifier();
-        const type = this.lookupKeyword(literal);
-        token = { type, literal };
+        if (KeywordMap[literal])
+          token = KeywordMap[literal];
+        if (!token)
+          token = { type: 'ident', literal };
+        token.literal = literal;
       }
     } else if (digit(this.ch)) {
       const ch = this.peekChar();
@@ -110,11 +108,6 @@ export default class Lexer {
     } else {
       return this.input[this.readPosition];
     }
-  }
-
-  private lookupKeyword(ident: string): string | undefined {
-    if (keywords[ident]) return keywords[ident].type;
-    return 'ident';
   }
 }
 
