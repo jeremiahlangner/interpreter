@@ -1,106 +1,85 @@
-import { Rule, Statement } from './ast';
-import { Token } from './token';
 import Lexer from './lexer';
+import { Token, Keyword, } from './token';
 
-enum precedence {
-  _, 
-  LOWEST,
-  EQUALS,
-  LESSGREATER,
-  SUM,
-  PRODUCT,
-  PREFIX,
-  CALL
+enum Precedence {
+  condition = 1,
+  sum = 2,
+  product = 3,
+  prefix = 4,
+  postfix = 5,
 }
 
-interface Expression {};
+interface Expression {}
 
-interface PrefixPart {
-  parse(parser: Parser, token: Token): Expression;
+interface Prefix extends Expression {
+  type: Token['type'] | Keyword['type'],
+  right: Expression, 
 }
 
-class IdentifierExpression implements Expression {
-  constructor(literal: string) {}
+interface Postfix extends Expression {
+  type: Token['type'] | Keyword['type'],
+  left: Expression, 
 }
 
-class Identifier implements PrefixPart {
-  parse(parser: Parser, token: Token): Expression {
-    return new IdentifierExpression(token.literal!);
-  }
-}
-
-class PrefixExpression implements Expression {
-  constructor(type: string, operand: Token) {}
-}
-
-class PrefixOperatorPart implements PrefixPart {
-  parse(parser: Parser, token: Token): Expression {
-    const operand = parser.parse();
-    return new PrefixExpression(token.type, operand);
-  }
+interface Operator extends Expression {
+  left: Expression,
+  right: Expression,
+  operator: Token['type'],
 }
 
 export class Parser {
   lexer: Lexer;
-  curToken: Token | undefined;
-  peekToken: Token | undefined;
+  current: Token | Keyword | undefined;
+  peek: Token | Keyword | undefined;
+  
+  prefixes: Record<string, any> = {
+    ident: () => this.current,
+    // recursively parse until encounter right parenthesis
+    lparen: () => {
+      const expr = this.parse();
+      this.next();
+      return expr;
+    },
+    plus: () => ({ operator: this.current!.type, right: this.parse() }),
+    minus:() => ({ operator: this.current!.type, right: this.parse() }),
+    colon: () => {},
+    lbracket: () => {},
+  };
 
-  errors: any[] = [];
-  prefixFns: any[] = [];
-  infixFns: any[] = [];
+  infixes: Record<string, any> = {
+    plus: () => {},
+    minus: () => {},
+    times: () => {},
+    divide: () => {},
+    lcaret: () => {},
+    rcaret: () => {},
+  };
 
-  prefixExpressions: Record<string, any> = {};
-  infixExpressions: Record<string, any> = {};
+  postfixes: Record<string, any> = {
+    rbracket: () => {},
+  }
 
   constructor(lexer: Lexer) {
     this.lexer = lexer;
-    this.nextToken();
-    this.nextToken();
+    this.next();
+    this.next();
   }
 
-  private nextToken() {
-    this.curToken = this.peekToken;
-    this.peekToken = this.lexer.nextToken();
+  private next(expected?: Token | Keyword) {
+    if (expected && this.peek!.type != expected.type)
+      throw new Error(`Syntax error at position ${this.lexer.position + 1} - Expected '${expected.literal}' and found '${this.peek!.literal}'`);
+
+    this.current = this.peek;
+    this.peek = this.lexer.next();
   }
 
-  parse() {
-    if (!this.curToken)
+  parse(precedence: number = 0): any {
+    if (!this.current)
       throw new Error('No current token exists');
 
-    const prefix = this.prefixExpressions[this.curToken.type!];
+    const prefix = this.prefixes[this.current.type!];
     if (!prefix) 
-      throw new Error(`Failed to parse ${this.curToken.literal}`);
-
-    const left = prefix.parse();
-
-  }
-
-  // a simple expression parser
-  /*
-  parseRule(): boolean {
-    const statement: ExpressionStatement = { token: this.curToken };
-
-    while (this.curToken) {
-      switch (this.curToken!.type) {
-        case 'boolean':
-          if (!this.nextToken) {
-            // TODO: eval
-          }
-      }
-    }
-
-    // default return; rule doesn't exist
-    return false;
-  }
-  */
-
-  expectPeek(token: Token) {
-    if (this.peekToken && this.peekToken.type === token.type) {
-      this.nextToken();
-      return true;
-    }
-    console.error('Unexpected token at', this.lexer.readPosition);
-    return false;
+      throw new Error(`Failed to parse ${this.current.literal}`);
   }
 }
 
@@ -109,6 +88,6 @@ const input = 'some_variable = 45';
 const lexer = new Lexer();
 lexer.lex(input);
 const parser = new Parser(lexer);
-const output = parser.parseRule();
+const output = parser.parse();
 console.log(output);
 

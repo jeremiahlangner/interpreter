@@ -16,7 +16,7 @@ function getInput() {
 
     let token;
     do {
-      token = lexer.nextToken();
+      token = lexer.next();
       console.log('token', token);
     } while (token);
 
