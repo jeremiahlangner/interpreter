@@ -5,7 +5,7 @@
   "main": "repl.ts",
   "scripts": {
     "start": "npx tsx repl.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx tsx test.ts"
   },
   "keywords": [],
   "author": "",

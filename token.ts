@@ -5,7 +5,6 @@ type Token = BaseToken & Extract<
   LParenToken | 
   RParenToken |  
   EqualsToken |  
-  ColonToken |
   PlusToken |
   MinusToken | 
   LTToken | 
@@ -16,30 +15,119 @@ type Token = BaseToken & Extract<
   DivideToken |
   StringToken | 
   NumberToken |
-  EOFToken |
-  IdentifierToken
+  IdentifierToken |
+  ReferenceToken
 , { type: string }>;
 
-type BaseToken = { type: string, literal: string };
-type CommaToken = { type: 'comma', literal: ',' };
-type LBracketToken = { type: 'lbracket', literal: '[' };
-type RBracketToken = { type: 'rbracket', literal: ']' };
-type LParenToken = { type: 'lparen', literal: '(' };
-type RParenToken = { type: 'rparen', literal: ')' };
-type EqualsToken = { type: 'equals', literal: '=' };
-type ColonToken = { type: 'colon', literal: ':' };
-type PlusToken = { type: 'plus', literal: '+' };
-type MinusToken = { type: 'minus', literal: '-' };
-type LTToken = { type: 'lessthan', literal: '<' };
-type GTToken = { type: 'greaterthan', literal: '>' };
-type GTEqualToken = { type: 'greaterthanorequal', literal: '>=' };
-type LTEqualToken = { type: 'lessthanorequal', literal: '<=' };
-type MultiplyToken =  { type: 'multiply', literal: '*' };
-type DivideToken = { type: 'divide', literal: '/' };
-type StringToken = { type: 'string', literal: string, };
-type NumberToken = { type: 'number', literal: string, };
-type EOFToken = { type: 'eof', literal: string, };
-type IdentifierToken = { type: 'ident', literal: string, };
+type BaseToken = { 
+  literal: string,
+  prefix?: boolean,
+  infix?: boolean,
+};
+
+type CommaToken = { 
+  type: 'comma', 
+  literal: ',' 
+};
+
+type LBracketToken = { 
+  type: 'lbracket', 
+  literal: '[' 
+};
+
+type RBracketToken = { 
+  type: 'rbracket', 
+  literal: ']' 
+};
+
+type LParenToken = { 
+  type: 'lparen', 
+  literal: '(' 
+};
+
+type RParenToken = { 
+  type: 'rparen', 
+  literal: ')' 
+};
+
+type EqualsToken = { 
+  type: 'equals', 
+  literal: '=',
+  infix: true,
+};
+
+type PlusToken = { 
+  type: 'plus', 
+  literal: '+',
+  infix: true,
+};
+
+type MinusToken = { 
+  type: 'minus', 
+  literal: '-', 
+  prefix: true, 
+  infix: true, 
+};
+
+type LTToken = { 
+  type: 'lessthan', 
+  literal: '<',
+  infix: true, 
+};
+
+type GTToken = { 
+  type: 'greaterthan', 
+  literal: '>',
+  infix: true, 
+};
+
+type GTEqualToken = { 
+  type: 'greaterthanorequal', 
+  literal: '>=',
+  infix: true, 
+};
+
+type LTEqualToken = { 
+  type: 'lessthanorequal', 
+  literal: '<=',
+  infix: true, 
+};
+
+type MultiplyToken =  { 
+  type: 'multiply', 
+  literal: '*',
+  infix: true, 
+};
+
+type DivideToken = { 
+  type: 'divide', 
+  literal: '/',
+  infix: true, 
+};
+
+type StringToken = { 
+  type: 'string', 
+  literal: string, 
+};
+
+type NumberToken = { 
+  type: 'number', 
+  literal: string, 
+  prefix: true, 
+};
+
+
+type IdentifierToken = { 
+  type: 'ident', 
+  literal: string, 
+  prefix: true,
+};
+
+type ReferenceToken = { 
+  type: 'ref', 
+  literal: ':', 
+  prefix: true,
+};
 
 const TokenMap: Record<string, Token> = {
   ',': { type: 'comma', literal: ',' },
@@ -47,19 +135,19 @@ const TokenMap: Record<string, Token> = {
   ']': { type: 'rbracket', literal: ']' },
   '(': { type: 'lparen', literal: '(' },
   ')': { type: 'rparen', literal: ')' },
-  '=': { type: 'equals', literal: '=' },
-  ':': { type: 'colon', literal: ':' },
-  '+': { type: 'plus', literal: '+' },
-  '-': { type: 'minus', literal: '-' },
-  '<': { type: 'lessthan', literal: '<' },
-  '>': { type: 'greaterthan', literal: '>' },
-  '>=': { type: 'greaterthanorequal', literal: '>=' },
-  '<=': { type: 'lessthanorequal', literal: '<=' },
-  '*': { type: 'multiply', literal: '*' },
-  '/': { type: 'divide', literal: '/' },
+  '=': { type: 'equals', literal: '=', infix: true },
+  ':': { type: 'ref', literal: ':', prefix: true },
+  '+': { type: 'plus', literal: '+', infix: true },
+  '-': { type: 'minus', literal: '-', infix: true, prefix: true },
+  '<': { type: 'lessthan', literal: '<', infix: true },
+  '>': { type: 'greaterthan', literal: '>', infix: true },
+  '>=': { type: 'greaterthanorequal', literal: '>=', infix: true },
+  '<=': { type: 'lessthanorequal', literal: '<=', infix: true },
+  '*': { type: 'multiply', literal: '*', infix: true },
+  '/': { type: 'divide', literal: '/', infix: true },
 };
 
-type Keyword = Extract<
+type Keyword = BaseKeyword & Extract<
   AndKeyword |
   NotKeyword |
   InKeyword |
@@ -69,18 +157,40 @@ type Keyword = Extract<
   , { type: string }
 >;
 
-type AndKeyword =  { type: 'and', literal: 'and' };
-type NotKeyword = { type: 'not', literal: 'not' };
-type InKeyword = { type: 'in', literal: 'in' };
-type OrKeyword = { type: 'or', literal: 'or' };
+type BaseKeyword = {
+  infix?: boolean,
+  prefix?: boolean,
+}
 
-// These should perhaps be binary expressions
+type AndKeyword =  { 
+  type: 'and', 
+  literal: 'and' 
+};
+
+type NotKeyword = { 
+  type: 'not', 
+  literal: 'not', 
+  prefix: true, 
+  infix: true 
+};
+
+type InKeyword = { 
+  type: 'in', 
+  literal: 'in' 
+};
+
+type OrKeyword = { 
+  type: 'or', 
+  literal: 'or' 
+};
+
+// let me work with these for a minute...
 type TrueBoolean = { type: 'boolean', literal: 'true' };
 type FalseBoolean = { type: 'boolean', literal: 'false' };
 
 const KeywordMap: Record<string, Keyword> = {
   'and': { type: 'and', literal: 'and' },
-  'not': { type: 'not', literal: 'not' },
+  'not': { type: 'not', literal: 'not', prefix: true, infix: true },
   'in': { type: 'in', literal: 'in' },
   'or': { type: 'or', literal: 'or' },
   'true': { type: 'boolean', literal: 'true' },

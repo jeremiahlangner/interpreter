@@ -1,68 +1,94 @@
 import Lexer from './lexer';
 import { Token, Keyword, } from './token';
 
-enum Precedence {
-  condition = 1,
-  sum = 2,
-  product = 3,
-  prefix = 4,
-  postfix = 5,
+ const Precedence = {
+  nothing: 0,
+  equals: 1,
+  compare: 2,
+  sum: 3,
+  product: 4,
+  prefix: 5,
+  postfix: 6,
 }
 
-interface Expression {}
+const OperatorPrecedence = {
+  '=': Precedence.equals,
+  '!=': Precedence.equals,
+  '<': Precedence.equals,
+  '>': Precedence.equals,
+  '<=': Precedence.equals,
+  '>=': Precedence.equals,
+  '+': Precedence.sum,
+  '-': Precedence.sum,
+  '/': Precedence.product,
+  '*': Precedence.product,
+}
 
-interface Prefix extends Expression {
-  type: Token['type'] | Keyword['type'],
+type Expression = BaseExpression & Extract<
+  IdentifierExpression | 
+  NumberExpression |
+  PrefixExpression | 
+  InfixExpression, 
+  { token: Token | Keyword }
+>;
+
+type BaseExpression = {
+  token: Token | Keyword,
+}
+
+interface NumberExpression extends BaseExpression {
+  value: number,
+}
+
+interface IdentifierExpression extends BaseExpression {
+  value: any,
+}
+
+interface PrefixExpression extends BaseExpression {
+  operator: string,
   right: Expression, 
 }
 
-interface Postfix extends Expression {
-  type: Token['type'] | Keyword['type'],
-  left: Expression, 
-}
-
-interface Operator extends Expression {
+interface InfixExpression extends BaseExpression {
+  token: Token | Keyword,
+  right: Expression, 
+  operator: string,
   left: Expression,
-  right: Expression,
-  operator: Token['type'],
 }
 
-export class Parser {
+/*
+  A basic, simple Pratt parser implementation. Takes tokenized strings and parses
+  into a syntax tree. Only evaluates expressions.
+*/
+class Parser {
   lexer: Lexer;
   current: Token | Keyword | undefined;
   peek: Token | Keyword | undefined;
-  
-  prefixes: Record<string, any> = {
-    ident: () => this.current,
-    // recursively parse until encounter right parenthesis
-    lparen: () => {
-      const expr = this.parse();
-      this.next();
-      return expr;
-    },
-    plus: () => ({ operator: this.current!.type, right: this.parse() }),
-    minus:() => ({ operator: this.current!.type, right: this.parse() }),
-    colon: () => {},
-    lbracket: () => {},
-  };
-
-  infixes: Record<string, any> = {
-    plus: () => {},
-    minus: () => {},
-    times: () => {},
-    divide: () => {},
-    lcaret: () => {},
-    rcaret: () => {},
-  };
-
-  postfixes: Record<string, any> = {
-    rbracket: () => {},
-  }
 
   constructor(lexer: Lexer) {
     this.lexer = lexer;
-    this.next();
-    this.next();
+  }
+
+  private parsePrefixExpression(): IdentifierExpression | NumberExpression | PrefixExpression {
+    return this.current!.type == 'ident' ? { token: this.current!,
+      value: this.current!.literal,
+    } : this.current!.type == 'number' ? {
+      token: this.current!,
+      value: Number(this.current!.literal),
+    } : {
+      token: this.current!, 
+      operator: this.current!.literal,
+      right: this.parse(Precedence.prefix)! 
+    };
+  }
+
+  private parseInfixExpression(left: Expression): InfixExpression {
+    return {
+      token: this.current!,
+      left,
+      operator: this.current!.literal,
+      right: this.parse(OperatorPrecedence[this.current!.literal as keyof typeof OperatorPrecedence])!,
+    };
   }
 
   private next(expected?: Token | Keyword) {
@@ -73,21 +99,39 @@ export class Parser {
     this.peek = this.lexer.next();
   }
 
-  parse(precedence: number = 0): any {
-    if (!this.current)
-      throw new Error('No current token exists');
+  private peekPrecedence(): number {
+    if (!this.peek) return 0;
+    return OperatorPrecedence[this.peek!.literal as keyof typeof OperatorPrecedence] || 0;
+  }
 
-    const prefix = this.prefixes[this.current.type!];
-    if (!prefix) 
-      throw new Error(`Failed to parse ${this.current.literal}`);
+  parse(precedence: number = 0): Expression | undefined {
+    this.next();
+    if (!precedence) this.next();
+
+    if (!this.current) return;
+
+    if (!this.current.prefix)
+      throw new Error(`Could not parse expression at position ${this.lexer.position}, '${this.current!.literal}' is not a valid prefix`);
+
+    let left = this.parsePrefixExpression(); 
+
+    while (this.peek && precedence < this.peekPrecedence()) {
+      if (!this.peek.infix)
+        return left;
+
+      this.next();
+      left = this.parseInfixExpression(left); 
+    } 
+
+    return left;
   }
 }
 
-// assertions / logging
-const input = 'some_variable = 45';
-const lexer = new Lexer();
-lexer.lex(input);
-const parser = new Parser(lexer);
-const output = parser.parse();
-console.log(output);
-
+export { 
+  Parser,
+  Expression,
+  IdentifierExpression,  
+  NumberExpression,
+  PrefixExpression,
+  InfixExpression,
+}
