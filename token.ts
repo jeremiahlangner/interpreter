@@ -25,108 +25,95 @@ type BaseToken = {
   infix?: boolean,
 };
 
-type CommaToken = { 
+interface CommaToken extends BaseToken { 
   type: 'comma', 
   literal: ',' 
 };
 
-type LBracketToken = { 
+interface LBracketToken extends BaseToken { 
   type: 'lbracket', 
   literal: '[' 
 };
 
-type RBracketToken = { 
+interface RBracketToken extends BaseToken { 
   type: 'rbracket', 
   literal: ']' 
 };
 
-type LParenToken = { 
+interface LParenToken extends BaseToken { 
   type: 'lparen', 
   literal: '(' 
 };
 
-type RParenToken = { 
+interface RParenToken extends BaseToken { 
   type: 'rparen', 
   literal: ')' 
 };
 
-type EqualsToken = { 
+interface EqualsToken extends BaseToken { 
   type: 'equals', 
   literal: '=',
-  infix: true,
 };
 
-type PlusToken = { 
+interface PlusToken extends BaseToken { 
   type: 'plus', 
   literal: '+',
-  infix: true,
 };
 
-type MinusToken = { 
+interface MinusToken extends BaseToken { 
   type: 'minus', 
   literal: '-', 
-  prefix: true, 
-  infix: true, 
 };
 
-type LTToken = { 
+interface LTToken extends BaseToken { 
   type: 'lessthan', 
   literal: '<',
-  infix: true, 
 };
 
-type GTToken = { 
+interface GTToken extends BaseToken { 
   type: 'greaterthan', 
   literal: '>',
-  infix: true, 
 };
 
-type GTEqualToken = { 
+interface GTEqualToken extends BaseToken { 
   type: 'greaterthanorequal', 
   literal: '>=',
-  infix: true, 
 };
 
-type LTEqualToken = { 
+interface LTEqualToken extends BaseToken { 
   type: 'lessthanorequal', 
   literal: '<=',
-  infix: true, 
 };
 
-type MultiplyToken =  { 
+interface MultiplyToken extends BaseToken { 
   type: 'multiply', 
   literal: '*',
-  infix: true, 
 };
 
-type DivideToken = { 
+interface DivideToken extends BaseToken { 
   type: 'divide', 
   literal: '/',
-  infix: true, 
 };
 
-type StringToken = { 
+interface StringToken extends BaseToken { 
   type: 'string', 
   literal: string, 
 };
 
-type NumberToken = { 
+interface NumberToken extends BaseToken { 
   type: 'number', 
   literal: string, 
-  prefix: true, 
 };
 
 
-type IdentifierToken = { 
+interface IdentifierToken extends BaseToken { 
   type: 'ident', 
   literal: string, 
-  prefix: true,
 };
 
-type ReferenceToken = { 
+interface ReferenceToken extends BaseToken { 
   type: 'ref', 
   literal: ':', 
-  prefix: true,
 };
 
 const TokenMap: Record<string, Token> = {
