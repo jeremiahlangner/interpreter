@@ -82,6 +82,11 @@ class Parser {
           token: this.current!,
           value: this.current!.literal,
         };
+      case 'boolean':
+        return {
+          token: this.current!,
+          value: this.current!.literal === 'true' ? true : false,
+        };
       case 'lparen':
         const exp = this.parse(Precedence.lowest);
         if (this.peek!.type == 'rparen') this.next();

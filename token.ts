@@ -139,8 +139,8 @@ type Keyword = BaseKeyword & Extract<
   NotKeyword |
   InKeyword |
   OrKeyword | 
-  TrueBoolean |
-  FalseBoolean 
+  True |
+  False 
   , { type: string }
 >;
 
@@ -171,17 +171,23 @@ interface OrKeyword extends BaseKeyword {
   literal: 'or' 
 };
 
-// let me work with these for a minute...
-type TrueBoolean = { type: 'boolean', literal: 'true' };
-type FalseBoolean = { type: 'boolean', literal: 'false' };
+interface True extends BaseKeyword { 
+  type: 'boolean', 
+  literal: 'true', 
+};
+
+interface False extends BaseKeyword { 
+  type: 'boolean', 
+  literal: 'false'
+};
 
 const KeywordMap: Record<string, Keyword> = {
   'and': { type: 'and', literal: 'and', infix: true },
   'not': { type: 'not', literal: 'not', prefix: true, infix: true },
   'in': { type: 'in', literal: 'in', infix: true },
   'or': { type: 'or', literal: 'or', infix: true },
-  'true': { type: 'boolean', literal: 'true' },
-  'false': { type: 'boolean', literal: 'false' },
+  'true': { type: 'boolean', literal: 'true', prefix: true },
+  'false': { type: 'boolean', literal: 'false', prefix: true },
 };
 
 export { Keyword, Token, KeywordMap, TokenMap };

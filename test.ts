@@ -40,6 +40,8 @@ assert((parser.parse() as InfixExpression).operator == '*');
 lexer.lex('0 / 12');
 assert((parser.parse() as InfixExpression).operator == '/');
 
-// Do parentheses work?
 lexer.lex('1 + (2 + 3) = 4');
 console.log(JSON.stringify(parser.parse(), null, ' '));
+
+lexer.lex('true');
+console.log(parser.parse());
