@@ -67,6 +67,7 @@ export default class Lexer {
     this.readPosition += 1;
   }
 
+  // TODO: identifier bracket notation
   private readIdentifier(): string {
     const position = this.position;
     while (letter(this.ch)) {
