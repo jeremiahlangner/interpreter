@@ -44,7 +44,7 @@ export default class Lexer {
       }
     } else if (digit(this.ch)) {
       const ch = this.peek();
-      if (digit(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
+      if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
         token = { type: 'number', literal: this.readNumber(), prefix: true, infix: true };
       }
     } else {

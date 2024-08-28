@@ -120,7 +120,7 @@ const TokenMap: Record<string, Token> = {
   ',': { type: 'comma', literal: ',' },
   '[': { type: 'lbracket', literal: '[' },
   ']': { type: 'rbracket', literal: ']' },
-  '(': { type: 'lparen', literal: '(' },
+  '(': { type: 'lparen', literal: '(', prefix: true },
   ')': { type: 'rparen', literal: ')' },
   '=': { type: 'equals', literal: '=', infix: true },
   ':': { type: 'ref', literal: ':', prefix: true },

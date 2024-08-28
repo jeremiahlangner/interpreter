@@ -3,12 +3,13 @@ import { Token, Keyword, } from './token';
 
  const Precedence = {
   nothing: 0,
-  equals: 1,
-  compare: 2,
-  sum: 3,
-  product: 4,
-  prefix: 5,
-  postfix: 6,
+  lowest: 1,
+  equals: 2,
+  compare: 3,
+  sum: 4,
+  product: 5,
+  prefix: 6,
+  postfix: 7,
 }
 
 const OperatorPrecedence = {
@@ -70,15 +71,27 @@ class Parser {
   }
 
   private parsePrefixExpression(): IdentifierExpression | NumberExpression | PrefixExpression {
-    return this.current!.type == 'ident' ? { token: this.current!,
-      value: this.current!.literal,
-    } : this.current!.type == 'number' ? {
+    switch (this.current!.type) {
+      case 'ident': 
+        return {
+          token: this.current!,
+          value: this.current!.literal,
+        };
+      case 'number':
+        return {
+          token: this.current!,
+          value: this.current!.literal,
+        };
+      case 'lparen':
+        const exp = this.parse(Precedence.lowest);
+        if (this.peek!.type == 'rparen') this.next();
+        return exp!;
+    }
+    
+    return {
       token: this.current!,
-      value: Number(this.current!.literal),
-    } : {
-      token: this.current!, 
       operator: this.current!.literal,
-      right: this.parse(Precedence.prefix)! 
+      right: this.parse(Precedence.prefix)!
     };
   }
 
@@ -116,6 +129,7 @@ class Parser {
     let left = this.parsePrefixExpression(); 
 
     while (this.peek && precedence < this.peekPrecedence()) {
+      console.log(this.peek, this.peekPrecedence());
       if (!this.peek.infix)
         return left;
 
