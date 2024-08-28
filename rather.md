@@ -1,7 +1,12 @@
 # Rather
 
+"Rather" inherited its name because I would "rather" write a few simplified 
+localized comparisons with pre-loaded static data than create discrete api 
+calls for configurable conditional statements in a single-page application.
+
 Rather is a simple form of notation to succinctly compare data values in a 
-business context. 
+business context. It is a simple expression evaluator for a simplified
+expression based language.
 
 Its goal is to enable savvy clients to manage and update business logic for 
 pre-existing data points with minimal technical attention.
@@ -15,7 +20,32 @@ comparisons.
 
 ## Data Paths
 
+A Rather evaluator accepts data either as a JavaScript Object or JSON string.
+If data is passed as a string, it is first parsed into a JavaScript Object.
 
+Each instance of an evaluator may have a new data object supplied.
+
+Data paths are indicated by text values with dot notation.
+
+### Example
+```
+some_root.some_SubRoot.someVar
+```
+
+The left-most name indicates the root of the data object.
+
+Lists are represented with bracket notation. The brackets may include a number
+to indicate an item at a specific location in a list or be empty to reference
+a current item in an iteration.
+
+Lists are 0-indexed. (The first item starts at index 0, the second and 1, and 
+so on.)
+
+### Example
+```
+some_list.[3].someVar  <-- Represents someVar of the fourth item in some_list.
+some_list.[].someVar <-- Represents someVar of the current item in an iteration of some_list.
+```
 
 ## Syntax
 
@@ -34,17 +64,11 @@ truthy result. For non-mathematical values, see note about values below.
 
 |Operator|Name|Description|
 |---|---|---|
-|=| equals | Checks for equality on both sides of a statement|
-|>| greater than | Checks that the left side of a statement maintains a greater
-value than the right side |
-|<| less than | Checks that the left side of a statement maintains a lesser 
-value than the right side |
-|>=| greater than or equal to | Checks that the left side of a statement 
-maintains a value greater than or equal to the right side of a conditional 
-statement. |
-|<=| less than or equal to | Checks that the left side of a statement 
-maintains a value leser than or equal to the right side of a conditional 
-statement. |
+| = | equals | Checks for equality on both sides of a statement |
+| &gt; | greater than | Checks that the left side of a statement maintains a greater value than the right side |
+| &lt; | less than | Checks that the left side of a statement maintains a lesser value than the right side |
+| &gt;= | greater than or equal to | Checks that the left side of a statement maintains a value greater than or equal to the right side of a conditional statement. |
+| &lt;= | less than or equal to | Checks that the left side of a statement maintains a value leser than or equal to the right side of a conditional statement. |
 
 
 ### Active Operators
@@ -68,15 +92,12 @@ statement.
 
 |Keyword|Name|Description|
 |---|---|---|
-|and| and | Joins two or more conditional statements and requires all to be true
-to satisfy a logical condition. |
-|or| or | Represents a logical or condition among two or more conditional
-statements. |
-|not| not | Indicates a negation of a condition or statement. |
-|in| in | A comparative keyword that allows for checking whether an item exists 
-in a list or a set of characters appears in a text string |
-|true| true | Indicates a truthy condition. |
-|false| false | Indicates a truthy condition. |
+| and | and | Joins two or more conditional statements and requires all to be true to satisfy a logical condition. |
+| or | or | Represents a logical or condition among two or more conditional statements. |
+| not| not | Indicates a negation of a condition or statement. |
+| in | in | A comparative keyword that allows for checking whether an item exists in a list or a set of characters appears in a text string |
+| true | true | Indicates a truthy condition. |
+| false | false | Indicates a truthy condition. |
 
 
 
