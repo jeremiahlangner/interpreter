@@ -13,8 +13,8 @@ type Token = BaseToken & Extract<
   LTEqualToken | 
   MultiplyToken |
   DivideToken |
-  StringToken | 
-  NumberToken |
+  StringLiteral | 
+  NumberLiteral |
   IdentifierToken |
   ReferenceToken
 , { type: string }>;
@@ -95,17 +95,6 @@ interface DivideToken extends BaseToken {
   literal: '/',
 };
 
-interface StringToken extends BaseToken { 
-  type: 'string', 
-  literal: string, 
-};
-
-interface NumberToken extends BaseToken { 
-  type: 'number', 
-  literal: string, 
-};
-
-
 interface IdentifierToken extends BaseToken { 
   type: 'ident', 
   literal: string, 
@@ -116,9 +105,24 @@ interface ReferenceToken extends BaseToken {
   literal: ':', 
 };
 
+interface StringLiteral extends BaseToken { 
+  type: 'string', 
+  literal: string, 
+};
+
+interface NumberLiteral extends BaseToken { 
+  type: 'number', 
+  literal: string, 
+};
+
+interface ListLiteral extends BaseToken {
+  type: 'list',
+  literal: string,
+}
+
 const TokenMap: Record<string, Token> = {
   ',': { type: 'comma', literal: ',' },
-  '[': { type: 'lbracket', literal: '[' },
+  '[': { type: 'lbracket', literal: '[', prefix: true },
   ']': { type: 'rbracket', literal: ']' },
   '(': { type: 'lparen', literal: '(', prefix: true },
   ')': { type: 'rparen', literal: ')' },

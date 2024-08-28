@@ -49,3 +49,5 @@ console.log(parser.parse());
 lexer.lex('"this is a string" = 5');
 console.log(parser.parse());
 
+lexer.lex('["this is a list", "testing", 5]');
+console.log(parser.parse());

@@ -96,6 +96,17 @@ class Parser {
         const exp = this.parse(Precedence.lowest);
         if (this.peek!.type == 'rparen') this.next();
         return exp!;
+      case 'lbracket':
+        const value = [];
+        do {
+          const exp = this.parse(Precedence.lowest);
+          if (this.peek!.type == 'comma') this.next();
+          value.push(exp);
+        } while (this.peek!.type !== 'rbracket');
+        return {
+          token: this.current!,
+          value,
+        };
     }
     
     return {
