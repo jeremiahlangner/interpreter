@@ -72,7 +72,8 @@ class Eval {
       '<': left < right,
       '>=': left >= right,
       '<=': left <= right,
-      'in': right.includes(left),
+      '=': left == right,
+      'in': right.includes ? right.includes(left): false,
       'and': left && right,
       'or': left || right,
     }[operator];

@@ -1,5 +1,7 @@
 import readline from 'readline';
 import Lexer from './lexer';
+import { Parser }from './parser';
+import { Eval }from './eval';
 
 const Prompt = '>> ';
 
@@ -9,17 +11,14 @@ const rl = readline.createInterface({
 });
     
 const lexer = new Lexer();
+const parser = new Parser(lexer);
+const evaluator = new Eval(lexer, parser);
 
 function getInput() {
   rl.question(Prompt, line => {
     lexer.lex(line);
-
-    let token;
-    do {
-      token = lexer.next();
-      console.log('token', token);
-    } while (token);
-
+    const exp = parser.parse();
+    console.log(evaluator.evaluate(exp!));
     getInput();
   });
 }

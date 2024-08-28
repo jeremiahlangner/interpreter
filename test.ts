@@ -8,9 +8,12 @@ import {
   InfixExpression,
 } from './parser';
 
+import { Eval } from './eval';
+
 // Parser Tests
 const lexer = new Lexer();
 const parser = new Parser(lexer);
+const evaluator = new Eval(lexer, parser);
 
 lexer.lex('5');
 assert((parser.parse() as LiteralExpression).value == 5);
@@ -39,6 +42,11 @@ assert((parser.parse() as InfixExpression).operator == '*');
 lexer.lex('0 / 12');
 assert((parser.parse() as InfixExpression).operator == '/');
 
+lexer.lex('0 * 5');
+const exp = parser.parse();
+console.log(evaluator.evaluate(exp!));
+
+/*
 lexer.lex('3 + (1 + (2 + 3)) = 4');
 console.log(JSON.stringify(parser.parse(), null, ' '));
 
@@ -53,3 +61,6 @@ console.log(parser.parse());
 
 lexer.lex('4 in [1, 2,3, 4]');
 console.log(parser.parse());
+*/
+
+
