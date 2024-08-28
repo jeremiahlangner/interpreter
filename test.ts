@@ -3,8 +3,7 @@ import assert from 'assert';
 import Lexer from './lexer';
 import { 
   Parser, 
-  NumberExpression, 
-  IdentifierExpression,
+  LiteralExpression,
   PrefixExpression,
   InfixExpression,
 } from './parser';
@@ -14,13 +13,13 @@ const lexer = new Lexer();
 const parser = new Parser(lexer);
 
 lexer.lex('5');
-assert((parser.parse() as NumberExpression).value == 5);
+assert((parser.parse() as LiteralExpression).value == 5);
 
 lexer.lex('5.12345');
-assert((parser.parse() as NumberExpression).value == 5.12345);
+assert((parser.parse() as LiteralExpression).value == 5.12345);
 
 lexer.lex('some_identifier');
-assert((parser.parse() as IdentifierExpression).value == 'some_identifier');
+assert((parser.parse() as LiteralExpression).value == 'some_identifier');
 
 lexer.lex('-5');
 assert(parser.parse()!.token.literal == '-');

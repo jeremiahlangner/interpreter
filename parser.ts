@@ -29,8 +29,7 @@ const OperatorPrecedence = {
 }
 
 type Expression = BaseExpression & Extract<
-  IdentifierExpression | 
-  NumberExpression |
+  LiteralExpression |
   PrefixExpression | 
   InfixExpression, 
   { token: Token | Keyword }
@@ -40,11 +39,7 @@ type BaseExpression = {
   token: Token | Keyword,
 }
 
-interface NumberExpression extends BaseExpression {
-  value: number,
-}
-
-interface IdentifierExpression extends BaseExpression {
+interface LiteralExpression extends BaseExpression {
   value: any,
 }
 
@@ -54,7 +49,6 @@ interface PrefixExpression extends BaseExpression {
 }
 
 interface InfixExpression extends BaseExpression {
-  token: Token | Keyword,
   right: Expression, 
   operator: string,
   left: Expression,
@@ -73,27 +67,23 @@ class Parser {
     this.lexer = lexer;
   }
 
-  private parsePrefixExpression(): IdentifierExpression | NumberExpression | PrefixExpression {
+  private parsePrefixExpression(): LiteralExpression | PrefixExpression {
     switch (this.current!.type) {
       case 'ident': 
+      case 'string':
         return {
           token: this.current!,
           value: this.current!.literal,
         };
-      case 'number':
+      case 'number': 
         return {
           token: this.current!,
-          value: this.current!.literal,
+          value: Number(this.current!.literal),
         };
       case 'boolean':
         return {
           token: this.current!,
           value: this.current!.literal === 'true' ? true : false,
-        };
-      case 'string': 
-        return {
-          token: this.current!,
-          value: this.current!.literal
         };
       case 'lparen':
         const exp = this.parse(Precedence.lowest);
@@ -167,8 +157,7 @@ class Parser {
 export { 
   Parser,
   Expression,
-  IdentifierExpression,  
-  NumberExpression,
+  LiteralExpression,
   PrefixExpression,
   InfixExpression,
 }
