@@ -45,3 +45,7 @@ console.log(JSON.stringify(parser.parse(), null, ' '));
 
 lexer.lex('true');
 console.log(parser.parse());
+
+lexer.lex('"this is a string" = 5');
+console.log(parser.parse());
+

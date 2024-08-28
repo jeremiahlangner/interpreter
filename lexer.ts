@@ -31,7 +31,7 @@ export default class Lexer {
     } else if (this.ch === '') {
       return;
     } else if (this.ch === '"') {
-      token = { type: 'string', literal: this.readString() };
+      token = { type: 'string', literal: this.readString(), prefix: true };
     } else if (letter(this.ch)) {
       const ch = this.peek();
       if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
