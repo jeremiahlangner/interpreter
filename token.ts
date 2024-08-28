@@ -149,24 +149,24 @@ type BaseKeyword = {
   prefix?: boolean,
 }
 
-type AndKeyword =  { 
+interface AndKeyword extends BaseKeyword  { 
   type: 'and', 
   literal: 'and' 
 };
 
-type NotKeyword = { 
+interface NotKeyword extends BaseKeyword { 
   type: 'not', 
   literal: 'not', 
   prefix: true, 
   infix: true 
 };
 
-type InKeyword = { 
+interface InKeyword extends BaseKeyword { 
   type: 'in', 
   literal: 'in' 
 };
 
-type OrKeyword = { 
+interface OrKeyword extends BaseKeyword { 
   type: 'or', 
   literal: 'or' 
 };
@@ -176,10 +176,10 @@ type TrueBoolean = { type: 'boolean', literal: 'true' };
 type FalseBoolean = { type: 'boolean', literal: 'false' };
 
 const KeywordMap: Record<string, Keyword> = {
-  'and': { type: 'and', literal: 'and' },
+  'and': { type: 'and', literal: 'and', infix: true },
   'not': { type: 'not', literal: 'not', prefix: true, infix: true },
-  'in': { type: 'in', literal: 'in' },
-  'or': { type: 'or', literal: 'or' },
+  'in': { type: 'in', literal: 'in', infix: true },
+  'or': { type: 'or', literal: 'or', infix: true },
   'true': { type: 'boolean', literal: 'true' },
   'false': { type: 'boolean', literal: 'false' },
 };
