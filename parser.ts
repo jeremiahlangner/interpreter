@@ -19,6 +19,9 @@ const OperatorPrecedence = {
   '>': Precedence.equals,
   '<=': Precedence.equals,
   '>=': Precedence.equals,
+  'in': Precedence.equals,
+  'and': Precedence.equals,
+  'or': Precedence.equals,
   '+': Precedence.sum,
   '-': Precedence.sum,
   '/': Precedence.product,
@@ -150,7 +153,6 @@ class Parser {
     let left = this.parsePrefixExpression(); 
 
     while (this.peek && precedence < this.peekPrecedence()) {
-      console.log(this.peek, this.peekPrecedence());
       if (!this.peek.infix)
         return left;
 

@@ -36,10 +36,11 @@ export default class Lexer {
       const ch = this.peek();
       if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
         const literal = this.readIdentifier();
-        if (KeywordMap[literal])
-          token = KeywordMap[literal];
-        if (!token)
-          token = { type: 'ident', literal, prefix: true, infix: true};
+
+        if (KeywordMap[literal]) token = KeywordMap[literal];
+
+        if (!token) token = { type: 'ident', literal, prefix: true, infix: true};
+
         token.literal = literal;
       }
     } else if (digit(this.ch)) {

@@ -40,7 +40,7 @@ assert((parser.parse() as InfixExpression).operator == '*');
 lexer.lex('0 / 12');
 assert((parser.parse() as InfixExpression).operator == '/');
 
-lexer.lex('1 + (2 + 3) = 4');
+lexer.lex('3 + (1 + (2 + 3)) = 4');
 console.log(JSON.stringify(parser.parse(), null, ' '));
 
 lexer.lex('true');
@@ -50,4 +50,7 @@ lexer.lex('"this is a string" = 5');
 console.log(parser.parse());
 
 lexer.lex('["this is a list", "testing", 5]');
+console.log(parser.parse());
+
+lexer.lex('4 in [1, 2,3, 4]');
 console.log(parser.parse());
