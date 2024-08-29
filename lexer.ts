@@ -32,7 +32,7 @@ export default class Lexer {
       return;
     } else if (this.ch === '"') {
       token = { type: 'string', literal: this.readString(), prefix: true };
-    } else if (letter(this.ch)) {
+    } else if (letter(this.ch) && !digit(this.ch)) {
       const ch = this.peek();
       if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
         const literal = this.readIdentifier();
@@ -67,7 +67,6 @@ export default class Lexer {
     this.readPosition += 1;
   }
 
-  // TODO: identifier bracket notation
   private readIdentifier(): string {
     const position = this.position;
     while (letter(this.ch)) {
@@ -118,7 +117,13 @@ function ws(ch: string): boolean {
 }
 
 function letter(ch: string): boolean {
-  return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch === '.';
+  return ('a' <= ch && ch <= 'z') || 
+    ('A' <= ch && ch <= 'Z') || 
+    ('0' <= ch && ch <= '9') ||
+    ch === '_' || 
+    ch === '.' || 
+    ch === '[' || 
+    ch === ']';
 }
 
 function digit(ch: string): boolean {

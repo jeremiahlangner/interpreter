@@ -27,6 +27,13 @@ Each instance of an evaluator may have a new data object supplied.
 
 Data paths are indicated by text values with dot notation.
 
+Data paths may only include upper and lowercase letters, underscores, numbers,
+brackets (for list location references) and bracket indexes. Data paths must
+not include spaces.
+
+Data paths may not start with numbers. (e.g. `1test_var` is not a valid path
+name.)
+
 ### Example
 ```
 some_root.some_SubRoot.someVar
@@ -74,15 +81,15 @@ truthy result. For non-mathematical values, see note about values below.
 ### Active Operators
 
 Active operators allow for modification to values or data within comparison
-statements. non-mathematical use of operators is indicated in their
+statements. Non-mathematical use of operators, if available is indicated in their
 descriptions.
 
 |Operator|Name|Description|
 |---|---|---|
-|+| plus | Mathematically represents an addition operation.|
-|-| minus | Mathematically indicates a subtraction operation. |
-|*| multiply | Mathematically represents a multiplication operation |
-|/| divide | Mathematically represents a division operation |
+| + | plus | Mathematically represents an addition operation.|
+| - | minus | Mathematically indicates a subtraction operation. |
+| * | multiply | Mathematically represents a multiplication operation |
+| / | divide | Mathematically represents a division operation |
 
 
 ### Keywords
@@ -98,7 +105,54 @@ statement.
 | in | in | A comparative keyword that allows for checking whether an item exists in a list or a set of characters appears in a text string |
 | true | true | Indicates a truthy condition. |
 | false | false | Indicates a truthy condition. |
+| date | date | Allows for assignment of date values. (See examples for more information.) |
 
+#### Dates
+
+Dates are evaluated to epochal numeric values in milliseconds. Dates are best
+represented using a date function syntax. (Though date is technically a prefix.)
+
+Because dates are translated to numeric values they may be manipulated with 
+mathematical expressions.
+
+Dates may be created using either date strings or number values.
+
+A few reserved strings are useful for creating relative comparisons.
+
+|String|Description|
+|---|---|
+| now | Represents the current moment |
+| today | 00:00 in local time of the current day |
+
+The following will all evaluate to valid dates. Many different formats are 
+acceptable, but if using numeric values, remember to represent the date in 
+milliseconds.
+
+Example
+```
+date("12/12/2024")
+
+date(1724952610771)
+
+date("Thu Aug 29 2024 10:30:44 GMT-0700")
+
+date("2024-08-29T17:32:51.802Z")
+
+date("now")
+
+date("today")
+```
+
+The following are examples of ways to manipulate dates using mathematical
+expressions. 
+
+Example
+```
+date("12/12/2024") + 1000 <-- adds a second to the date.
+
+date(1724952644000 + (60 * 60 * 1000)) <-- use numeric values for larger time intervals
+
+```
 
 
 ### Symbols
@@ -107,30 +161,51 @@ Symbols correlate almost directly to punctuation in most languages.
 
 |Symbol|Name|Description|
 |---|---|---|
-|,| comma | Separates items in lists. |
-|[| left bracket | Denotes the beginning of a list. |
-|]| right bracket | Denotes the end of a list |
-|"| quote | Indicates the beginning or ending of a text value |
-|(| left parentheses | Indicates the beginning of a group of conditional
-statements. Signifies a group of conditions that must be evaluated prior to
-evaluation of an entire conditional statement. |
-|(| right parentheses | Indicates the end of a group of conditional
-statements. Signifies a group of conditions that must be evaluated prior to
-evaluation of an entire conditional statement. |
-|:| colon | When prefixing a text value indicates a reference to a named 
-pre-defined rule or condition. |
+| , | comma | Separates items in lists. |
+| [ | left bracket | Denotes the beginning of a list. |
+| ] | right bracket | Denotes the end of a list |
+| " | quote | Indicates the beginning or ending of a text value |
+| ( | left parentheses | Indicates the beginning of a group of conditional statements. Signifies a group of conditions that must be evaluated prior to evaluation of an entire conditional statement. |
+| ( | right parentheses | Indicates the end of a group of conditional statements. Signifies a group of conditions that must be evaluated prior to evaluation of an entire conditional statement. |
+| : | colon | When prefixing a text value indicates a reference to a named pre-defined rule or condition. |
+| - | minus | When prefixing a data path or number, the minus symbol will represent its negative value. |
+
+#### References
+
+The evaluated value of an existing rule may be referenced by the use of a colon
+prefixing the rule name from a ruleset supplied to the application. This is
+useful for succinctly stating expressions that require multiple conditions to
+be true.
+
+Example
+```
+(:rule1 and :rule2) or some_var >= 5
+```
+
+The above example would require both rule1 and rule2 to evaluate to 'true' or 
+some_var to be greater than or equal to 5 in order to evaluate as 'true'.
+
+#### Lists
+
+Lists may contain strings, numbers, boolean values, data paths, and even other
+expressions. Expressions will of course evaluate to boolean values, and may be
+better expressed through the use of rules.
 
 
 ### Strings
 
 When checking for equality, text values must be enclosed in double-quoted strings.
 
-Example: "This is a string" = "This is a string"
-
+Example
+```
+"This is a string" = "This is a string"
+```
 
 ### Numbers
 
-The following are "proper" numbers.
+Numbers may be integers or decimal values. Negative values are also acceptable.
+
+The following numbers are in the correct format and will be successfully evaluated.
 
 ```
 5 
@@ -155,13 +230,22 @@ The following numbers will not be processed correctly.
 
 ### Comparing Non-mathematical Values
 
+Rather resolves sides of expressions to three primary data types, strings,
+numbers, and booleans.
 
-### Examples
+
+#### Examples
 
 Number Comparison
-```JSON
-{
-  "rulename": "data.number_variable > 1234"
-}
+```
+data.number_variable > 1234
+```
+
+String comparisons check for exact correspondence. 
+
+Strings
+```
+"String" = "String" <-- is 'true'
+"string" = "StrInG" <-- is 'false'
 ```
 

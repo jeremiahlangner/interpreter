@@ -34,6 +34,7 @@ class Eval {
     this.ruleSet = typeof ruleSet === 'string' ? parseString(ruleSet) : ruleSet;
   }
 
+  // handle bracket notation?
   private getDataByPath(path: string): any {
     const paths = path.split('.');
     let data = this.data;
