@@ -1,7 +1,5 @@
 import readline from 'readline';
-import Lexer from './lexer';
-import { Parser }from './parser';
-import { Eval }from './eval';
+import Evaluator from './eval';
 
 const Prompt = '>> ';
 
@@ -12,17 +10,12 @@ const rl = readline.createInterface({
     
 let data: any;
 let rules: any;
-const lexer = new Lexer();
-const parser = new Parser(lexer);
-let evaluator = new Eval(lexer, parser, data, rules);
+let evaluator = new Evaluator(data, rules);
 
 function getInput() {
   rl.question(Prompt, line => {
     if (!getCommand(line)) {
-      lexer.lex(line);
-      const exp = parser.parse();
-      console.log(exp);
-      console.log(evaluator.evaluate(exp!));
+      console.log(evaluator.eval(line));
     }
     getInput();
   });
@@ -39,14 +32,14 @@ function getCommand(line: string) {
   if (cmd.includes('repl.data = ')) {
     data = cmd.split('repl.data = ')[1];
     console.log('Setting repl data to', data);
-    evaluator = new Eval(lexer, parser, data, rules);
+    evaluator = new Evaluator(data, rules);
     return true;
   }
 
   if (cmd.includes('repl.rules = ')) {
     rules = cmd.split('repl.rules = ')[1];
     console.log('Setting repl rules to', rules);
-    evaluator = new Eval(lexer, parser, data, rules);
+    evaluator = new Evaluator(data, rules);
     return true;
   }
 }

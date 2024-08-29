@@ -16,22 +16,25 @@ function parseString(str: string) {
   return {};
 }
 
-class Eval {
+export default class Evaluator {
   lexer: Lexer;
   parser: Parser;
   data: any;
   ruleSet: Record<string, string>;
 
   constructor(
-    lexer: Lexer, 
-    parser: Parser,
     data: string | any = {}, 
     ruleSet: string | Record<string, string> = {}
   ) {
-    this.lexer = lexer;
-    this.parser = parser;
+    this.lexer = new Lexer();
+    this.parser = new Parser(this.lexer);
     this.data = typeof data === 'string' ? parseString(data) : data;
     this.ruleSet = typeof ruleSet === 'string' ? parseString(ruleSet) : ruleSet;
+  }
+
+  eval(statement: string) {
+    this.lexer.lex(statement);
+    return this.evaluate(this.parser.parse());
   }
 
   // handle bracket notation?
@@ -45,7 +48,7 @@ class Eval {
     return data;
   }
 
-  evaluate(exp?: Expression): any {
+  private evaluate(exp?: Expression): any {
     if (!exp) return;
 
     switch (exp.token.type) {
@@ -67,8 +70,16 @@ class Eval {
       if ((<PrefixExpression>exp).operator === '-') 
         return -this.evaluate((<PrefixExpression>exp).right);
       
-      if ((<PrefixExpression>exp).operator === 'date') 
-        return new Date(this.evaluate((<PrefixExpression>exp).right)).valueOf();
+      if ((<PrefixExpression>exp).operator === 'date') { 
+        const dateExp = this.evaluate((<PrefixExpression>exp).right);
+        
+        if (typeof dateExp === 'string') {
+          if (dateExp === 'today') return new Date(new Date().toLocaleDateString()).valueOf();
+          if (dateExp === 'now') return new Date().valueOf();
+        }
+
+        return new Date(dateExp).valueOf();
+      }
 
       if ((<PrefixExpression>exp).operator === ':') {
         if (!this.ruleSet[((<PrefixExpression>exp).right as LiteralExpression).value as keyof typeof this.ruleSet])
@@ -98,8 +109,4 @@ class Eval {
       'or': left || right,
     }[operator];
   }
-}
-
-export {
-  Eval,
 }
