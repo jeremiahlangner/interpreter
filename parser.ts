@@ -101,7 +101,6 @@ class Parser {
           value,
         };
     }
-    
     return {
       token: this.current!,
       operator: this.current!.literal,

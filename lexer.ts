@@ -14,7 +14,7 @@ export default class Lexer {
     this.readChar();
   }
 
-  public next(): Extract<Token | Keyword, {type: string}> | undefined {
+  public next(): Extract<Token | Keyword, { type: string }> | undefined {
     let token: Extract<Token | Keyword, { type: string }> | undefined;
 
     this.skipWs();
@@ -49,8 +49,8 @@ export default class Lexer {
         token = { type: 'number', literal: this.readNumber(), prefix: true, infix: true };
       }
     } else {
-      console.error(`Syntax Error at position: '${this.position}'`);
-      throw new Error(`Syntax Error at position ${this.position}, - Unrecognized character: '${this.ch}'`);
+      console.error(`Syntax Error at position ${this.position} - Unrecognized character '${this.ch}'.`);
+      return;
     }
 
     this.readChar();

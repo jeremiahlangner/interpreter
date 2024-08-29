@@ -139,6 +139,7 @@ const TokenMap: Record<string, Token> = {
 };
 
 type Keyword = BaseKeyword & Extract<
+  DateKeyword |
   AndKeyword |
   NotKeyword |
   InKeyword |
@@ -153,6 +154,11 @@ type BaseKeyword = {
   prefix?: boolean,
 }
 
+interface DateKeyword extends BaseKeyword {
+  type: 'date',
+  literal: 'date',
+}
+
 interface AndKeyword extends BaseKeyword  { 
   type: 'and', 
   literal: 'and' 
@@ -161,8 +167,6 @@ interface AndKeyword extends BaseKeyword  {
 interface NotKeyword extends BaseKeyword { 
   type: 'not', 
   literal: 'not', 
-  prefix: true, 
-  infix: true 
 };
 
 interface InKeyword extends BaseKeyword { 
@@ -182,16 +186,17 @@ interface True extends BaseKeyword {
 
 interface False extends BaseKeyword { 
   type: 'boolean', 
-  literal: 'false'
+  literal: 'false',
 };
 
 const KeywordMap: Record<string, Keyword> = {
   'and': { type: 'and', literal: 'and', infix: true },
-  'not': { type: 'not', literal: 'not', prefix: true, infix: true },
+  'not': { type: 'not', literal: 'not', prefix: true, },
   'in': { type: 'in', literal: 'in', infix: true },
   'or': { type: 'or', literal: 'or', infix: true },
   'true': { type: 'boolean', literal: 'true', prefix: true },
   'false': { type: 'boolean', literal: 'false', prefix: true },
+  'date': { type: 'date', literal: 'date', prefix: true, },
 };
 
 export { Keyword, Token, KeywordMap, TokenMap };
