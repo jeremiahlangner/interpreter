@@ -12,6 +12,7 @@ import { Token, Keyword, } from './token';
   postfix: 7,
 }
 
+// TODO: Adjust compare precedence.
 const OperatorPrecedence = {
   '=': Precedence.equals,
   '!=': Precedence.equals,
