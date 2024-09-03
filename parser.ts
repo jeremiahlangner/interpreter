@@ -57,6 +57,8 @@ interface InfixExpression extends BaseExpression {
 /*
   A basic, simple Pratt parser implementation. Takes tokenized strings and parses
   into a syntax tree. Only evaluates expressions.
+
+  TODO: Add error messages for expected tokens.
 */
 class Parser {
   lexer: Lexer;

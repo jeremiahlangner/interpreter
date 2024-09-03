@@ -15,6 +15,7 @@ type Token = BaseToken & Extract<
   DivideToken |
   StringLiteral | 
   NumberLiteral |
+  ListLiteral |
   IdentifierToken |
   ReferenceToken
 , { type: string }>;
@@ -25,97 +26,97 @@ type BaseToken = {
   infix?: boolean,
 };
 
-interface CommaToken extends BaseToken { 
+type CommaToken = { 
   type: 'comma', 
   literal: ',' 
 };
 
-interface LBracketToken extends BaseToken { 
+type LBracketToken = { 
   type: 'lbracket', 
   literal: '[' 
 };
 
-interface RBracketToken extends BaseToken { 
+type RBracketToken = { 
   type: 'rbracket', 
   literal: ']' 
 };
 
-interface LParenToken extends BaseToken { 
+type LParenToken = { 
   type: 'lparen', 
   literal: '(' 
 };
 
-interface RParenToken extends BaseToken { 
+type RParenToken = { 
   type: 'rparen', 
   literal: ')' 
 };
 
-interface EqualsToken extends BaseToken { 
+type EqualsToken = { 
   type: 'equals', 
   literal: '=',
 };
 
-interface PlusToken extends BaseToken { 
+type PlusToken = { 
   type: 'plus', 
   literal: '+',
 };
 
-interface MinusToken extends BaseToken { 
+type MinusToken = { 
   type: 'minus', 
   literal: '-', 
 };
 
-interface LTToken extends BaseToken { 
+type LTToken = { 
   type: 'lessthan', 
   literal: '<',
 };
 
-interface GTToken extends BaseToken { 
+type GTToken = { 
   type: 'greaterthan', 
   literal: '>',
 };
 
-interface GTEqualToken extends BaseToken { 
+type GTEqualToken = { 
   type: 'greaterthanorequal', 
   literal: '>=',
 };
 
-interface LTEqualToken extends BaseToken { 
+type LTEqualToken = { 
   type: 'lessthanorequal', 
   literal: '<=',
 };
 
-interface MultiplyToken extends BaseToken { 
+type MultiplyToken = { 
   type: 'multiply', 
   literal: '*',
 };
 
-interface DivideToken extends BaseToken { 
+type DivideToken = { 
   type: 'divide', 
   literal: '/',
 };
 
-interface IdentifierToken extends BaseToken { 
+type IdentifierToken = { 
   type: 'ident', 
   literal: string, 
 };
 
-interface ReferenceToken extends BaseToken { 
+type ReferenceToken = { 
   type: 'ref', 
   literal: ':', 
 };
 
-interface StringLiteral extends BaseToken { 
+type StringLiteral = { 
   type: 'string', 
   literal: string, 
 };
 
-interface NumberLiteral extends BaseToken { 
+type NumberLiteral = { 
   type: 'number', 
   literal: string, 
 };
 
-interface ListLiteral extends BaseToken {
+type ListLiteral = {
   type: 'list',
   literal: string,
 }
@@ -154,37 +155,37 @@ type BaseKeyword = {
   prefix?: boolean,
 }
 
-interface DateKeyword extends BaseKeyword {
+type DateKeyword = {
   type: 'date',
   literal: 'date',
 }
 
-interface AndKeyword extends BaseKeyword  { 
+type AndKeyword = { 
   type: 'and', 
   literal: 'and' 
 };
 
-interface NotKeyword extends BaseKeyword { 
+type NotKeyword = { 
   type: 'not', 
   literal: 'not', 
 };
 
-interface InKeyword extends BaseKeyword { 
+type InKeyword = { 
   type: 'in', 
   literal: 'in' 
 };
 
-interface OrKeyword extends BaseKeyword { 
+type OrKeyword = { 
   type: 'or', 
   literal: 'or' 
 };
 
-interface True extends BaseKeyword { 
+type True = { 
   type: 'boolean', 
   literal: 'true', 
 };
 
-interface False extends BaseKeyword { 
+type False = { 
   type: 'boolean', 
   literal: 'false',
 };

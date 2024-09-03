@@ -39,14 +39,24 @@ export default class Lexer {
 
         if (KeywordMap[literal]) token = KeywordMap[literal];
 
-        if (!token) token = { type: 'ident', literal, prefix: true, infix: true};
+        if (!token) token = { 
+          type: 'ident', 
+          literal, 
+          prefix: true, 
+          infix: true
+        };
 
         token.literal = literal;
       }
     } else if (digit(this.ch)) {
       const ch = this.peek();
       if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
-        token = { type: 'number', literal: this.readNumber(), prefix: true, infix: true };
+        token = { 
+          type: 'number', 
+          literal: this.readNumber(), 
+          prefix: true, 
+          infix: true 
+        };
       }
     } else {
       console.error(`Syntax Error at position ${this.position} - Unrecognized character '${this.ch}'.`);
