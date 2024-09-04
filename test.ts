@@ -1,66 +1,87 @@
+import test from 'node:test';
 import assert from 'assert';
 
-import Lexer from './lexer';
-import { 
-  Parser, 
-  LiteralExpression,
-  PrefixExpression,
-  InfixExpression,
-} from './parser';
+import Evaluator from './eval';
 
-import { Eval } from './eval';
+const rather = new Evaluator();
 
-// Parser Tests
-const lexer = new Lexer();
-const parser = new Parser(lexer);
-const evaluator = new Eval(lexer, parser);
+test('Evaluator should evaluate string, boolean, and number literals.', async t => {
+  await t.test('The string "42" should evaluate to the number 42.', () => {
+    assert.strictEqual(rather.eval('42'), 42);
+  });
 
-lexer.lex('5');
-assert((parser.parse() as LiteralExpression).value == 5);
+  await t.test('The string "true" should evaluate to a true boolean value.', () => {
+    assert.strictEqual(rather.eval('true'), true);
+  });
 
-lexer.lex('5.12345');
-assert((parser.parse() as LiteralExpression).value == 5.12345);
+  await t.test('The string "false" should evaluate to the number false boolean value.', () => {
+    assert.strictEqual(rather.eval('false'), false);
+  });
 
-lexer.lex('some_identifier');
-assert((parser.parse() as LiteralExpression).value == 'some_identifier');
+  await t.test('The string "this is a string" should evaluate to the string literal "this is a string".', () => {
+    assert.strictEqual(rather.eval('"this is a string"'), "this is a string");
+  });
+});
 
-lexer.lex('-5');
-assert(parser.parse()!.token.literal == '-');
+test('Evaluator should evaluate number expressions using arithmetic operators to number literals.', async t => {
+  await t.test('1 + 1 should equal 2.', () => {
+    assert.strictEqual(rather.eval('1 + 1'), 2);
+  });
 
-lexer.lex('not some_identifier');
-assert(parser.parse()!.token.literal == 'not');
+  await t.test('1 - 1 should equal 0.', () => {
+    assert.strictEqual(rather.eval('1 - 1'), 0);
+  });
 
-lexer.lex('4 + 5');
-assert((parser.parse() as InfixExpression).operator == '+');
+  await t.test('1 * 1 should equal 1.', () => {
+    assert.strictEqual(rather.eval('1 * 1'), 1);
+  });
 
-lexer.lex('some_identifier - 45');
-assert((parser.parse() as InfixExpression).operator = '-');
+  await t.test('1 / 1 should equal 1.', () => {
+    assert.strictEqual(rather.eval('1 / 1'), 1);
+  });
 
-lexer.lex('5 * -45');
-assert((parser.parse() as InfixExpression).operator == '*');
+  await t.test('-1 / 1 should equal -1.', () => {
+    assert.strictEqual(rather.eval('-1 / 1'), -1);
+  });
+});
 
-lexer.lex('0 / 12');
-assert((parser.parse() as InfixExpression).operator == '/');
+test('Evaluator should evaluate logical operators properly within simple logical expressions.', async t => {
+  await t.test('Simple boolean expressions using and should evaluate to their logical boolean values.', () => {
+    assert.strictEqual(rather.eval('true and true'), true);
+    assert.strictEqual(rather.eval('false and false'), false);
+    assert.strictEqual(rather.eval('not false and true'), true);
+    assert.strictEqual(rather.eval('false and not true'), false);
+    assert.strictEqual(rather.eval('not true and not true'), false);
+    assert.strictEqual(rather.eval('not false and not false'), true);
+  });
 
-lexer.lex('0 * 5');
-const exp = parser.parse();
-console.log(evaluator.evaluate(exp!));
+  await t.test('Simple boolean expressions using or should evaluate to their logical boolean values.', () => {
+    assert.strictEqual(rather.eval('true or true'), true);
+    assert.strictEqual(rather.eval('false or false'), false);
+    assert.strictEqual(rather.eval('not false or true'), true);
+    assert.strictEqual(rather.eval('false or not true'), false);
+    assert.strictEqual(rather.eval('not true or not true'), false);
+    assert.strictEqual(rather.eval('not false or not false'), true);
+  });
+});
 
-/*
-lexer.lex('3 + (1 + (2 + 3)) = 4');
-console.log(JSON.stringify(parser.parse(), null, ' '));
-
-lexer.lex('true');
-console.log(parser.parse());
-
-lexer.lex('"this is a string" = 5');
-console.log(parser.parse());
-
-lexer.lex('["this is a list", "testing", 5]');
-console.log(parser.parse());
-
-lexer.lex('4 in [1, 2,3, 4]');
-console.log(parser.parse());
-*/
-
+test('Evaluator should evaluate comparisons to boolean values.', async t => {
+  await t.test('Simple equality expressions using "=" should return a boolean', () => {
+    assert.strictEqual(rather.eval('4 = 4'), true);
+    assert.strictEqual(rather.eval('4 = 5'), false);
+  });
+  
+  await t.test('Simple equality expressions using ">" and "<" should return a boolean', () => {
+    assert.strictEqual(rather.eval('4 > 4'), false);
+    assert.strictEqual(rather.eval('5 > 4'), true);
+    assert.strictEqual(rather.eval('4 < 4'), false);
+    assert.strictEqual(rather.eval('4 < 5'), true);
+    assert.strictEqual(rather.eval('4 > 5'), false);
+    assert.strictEqual(rather.eval('4 >= 5'), false);
+    assert.strictEqual(rather.eval('4 <= 4'), true);
+    assert.strictEqual(rather.eval('4 <= 5'), true);
+    assert.strictEqual(rather.eval('5 >= 5'), true);
+    assert.strictEqual(rather.eval('5 >= 4'), true);
+  });
+});
 
