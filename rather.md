@@ -107,6 +107,18 @@ statement.
 | false | false | Indicates a truthy condition. |
 | date | date | Allows for assignment of date values. (See examples for more information.) |
 
+#### A note about "not"
+
+Because "not" functions as a prefix in Rather, not cannot be used in conjunction
+with infix operators such as "=" directly. `not =` is not a proper operator in 
+Rather. To create an inequality expression prefix an equality expresssion with
+"not". 
+
+Example
+```
+not(a = b) <-- is the same as "a != b"
+```
+
 #### Dates
 
 Dates are evaluated to epochal numeric values in milliseconds. Dates are best
