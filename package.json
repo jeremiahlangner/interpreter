@@ -5,7 +5,7 @@
   "main": "repl.ts",
   "scripts": {
     "start": "npx tsx repl.ts",
-    "test": "npx tsx test.ts"
+    "test": "npx tsx --test --enable-source-maps --experimental-test-coverage"
   },
   "keywords": [],
   "author": "",

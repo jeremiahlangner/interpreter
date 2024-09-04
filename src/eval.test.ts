@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'assert';
-
 import Evaluator from './eval';
 
 const rather = new Evaluator();
