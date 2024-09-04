@@ -52,7 +52,7 @@ Use rules to allow for and store more complex expressions.
 ```TypeScript
 const rather = new Rather(
   { some: 'foo', data: 'bar', here: 'baz' },
-  { rule1: 'not (some = data)', rule2: ':rule1 and (here = baz)' }
+  { rule1: 'not (some = data)', rule2: ':rule1 and (here = "baz")' }
 );
 const result = rather.eval(':rule1 and :rule2'); // returns true
 ```
