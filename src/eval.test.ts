@@ -4,7 +4,7 @@ import Evaluator from './eval';
 
 const rather = new Evaluator();
 
-test('Evaluator should evaluate string, boolean, and number literals.', async t => {
+test('Evaluator should evaluate string, boolean, number, and list literals.', async t => {
   await t.test('The string "42" should evaluate to the number 42.', () => {
     assert.strictEqual(rather.eval('42'), 42);
   });
@@ -19,6 +19,15 @@ test('Evaluator should evaluate string, boolean, and number literals.', async t 
 
   await t.test('The string "this is a string" should evaluate to the string literal "this is a string".', () => {
     assert.strictEqual(rather.eval('"this is a string"'), "this is a string");
+  });
+  
+  await t.test('The string "[1, "string", true]" should evaluate to the list literal [1, "string", true].', () => {
+    const list = rather.eval('[1, "string", true]');
+    assert.strictEqual(Array.isArray(list), true);
+    assert.strictEqual(list.length, 3);
+    assert.strictEqual(list[0], 1);
+    assert.strictEqual(list[1], "string");
+    assert.strictEqual(list[2], true);
   });
 });
 
