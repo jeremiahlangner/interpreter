@@ -71,6 +71,11 @@ test('Evaluator should evaluate comparisons to boolean values.', async t => {
     assert.strictEqual(rather.eval('4 = 5'), false);
   });
   
+  await t.test('Simple inequality expressions using "not" should return an expected boolean', () => {
+    assert.strictEqual(rather.eval('not (4 = 4)'), false);
+    assert.strictEqual(rather.eval('not (4 = 5)'), true);
+  });
+  
   await t.test('Simple equality expressions using ">" and "<" should return a boolean', () => {
     assert.strictEqual(rather.eval('4 > 4'), false);
     assert.strictEqual(rather.eval('5 > 4'), true);

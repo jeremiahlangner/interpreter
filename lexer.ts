@@ -42,8 +42,7 @@ export default class Lexer {
         if (!token) token = { 
           type: 'ident', 
           literal, 
-          prefix: true, 
-          infix: true
+          prefix: true,
         };
 
         token.literal = literal;
@@ -53,9 +52,8 @@ export default class Lexer {
       if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
         token = { 
           type: 'number', 
-          literal: this.readNumber(), 
-          prefix: true, 
-          infix: true 
+          literal: this.readNumber(),
+          prefix: true,
         };
       }
     } else {

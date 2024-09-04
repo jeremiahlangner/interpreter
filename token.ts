@@ -192,7 +192,7 @@ type False = {
 
 const KeywordMap: Record<string, Keyword> = {
   'and': { type: 'and', literal: 'and', infix: true },
-  'not': { type: 'not', literal: 'not', prefix: true, },
+  'not': { type: 'not', literal: 'not', prefix: true, infix: true },
   'in': { type: 'in', literal: 'in', infix: true },
   'or': { type: 'or', literal: 'or', infix: true },
   'true': { type: 'boolean', literal: 'true', prefix: true },
