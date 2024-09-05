@@ -30,8 +30,12 @@ export default class Lexer {
       }
     } else if (this.ch === '') {
       return;
-    } else if (this.ch === '"') {
-      token = { type: 'string', literal: this.readString(), prefix: true };
+    } else if (this.ch === '"' || this.ch === "'") {
+      token = { 
+        type: 'string', 
+        literal: this.readString(this.ch), 
+        prefix: true 
+      };
     } else if (letter(this.ch) && !digit(this.ch)) {
       const ch = this.peek();
       if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
@@ -97,11 +101,11 @@ export default class Lexer {
     return num;
   }
 
-  private readString(): string {
+  private readString(mark?: "'" | '"'): string {
     const position = this.position;
     do {
       this.readChar();
-    } while(this.ch !== '"' && this.readPosition < this.input.length);
+    } while(this.ch !== mark && this.readPosition < this.input.length);
     return this.input.slice(position + 1, this.ch == '"' ? this.position : this.readPosition);
   }
 
@@ -129,9 +133,7 @@ function letter(ch: string): boolean {
     ('A' <= ch && ch <= 'Z') || 
     ('0' <= ch && ch <= '9') ||
     ch === '_' || 
-    ch === '.' || 
-    ch === '[' || 
-    ch === ']';
+    ch === '.'
 }
 
 function digit(ch: string): boolean {

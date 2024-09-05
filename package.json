@@ -1,16 +1,16 @@
 {
-  "name": "interpreter",
+  "name": "rather",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple expressions evaluator",
   "main": "repl.ts",
   "scripts": {
     "start": "npx tsx ./src/repl.ts",
-    "test": "npx tsx --test --enable-source-maps --experimental-test-coverage ./src/eval.test.ts"
+    "test": "npx tsx --test --enable-source-maps --experimental-test-coverage"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.14.10"
+    "@types/node": "^22.5.4"
   }
 }
