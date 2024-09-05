@@ -2,7 +2,7 @@ import Lexer from './lexer';
 import { Token, Keyword, } from './token';
 
  const Precedence = {
-  nothing: 0,
+  none: 0,
   lowest: 1,
   equals: 2,
   compare: 3,
@@ -18,13 +18,13 @@ import { Token, Keyword, } from './token';
 const OperatorPrecedence = {
   '=': Precedence.equals,
   '!=': Precedence.equals,
-  '<': Precedence.equals,
-  '>': Precedence.equals,
-  '<=': Precedence.equals,
-  '>=': Precedence.equals,
-  'in': Precedence.equals,
-  'and': Precedence.equals,
-  'or': Precedence.equals,
+  '<': Precedence.compare,
+  '>': Precedence.compare,
+  '<=': Precedence.compare,
+  '>=': Precedence.compare,
+  'in': Precedence.compare,
+  'and': Precedence.compare,
+  'or': Precedence.compare,
   '+': Precedence.sum,
   '-': Precedence.sum,
   '/': Precedence.product,
@@ -125,11 +125,15 @@ class Parser {
   private parseInfixExpression(left: Expression): InfixExpression | IndexExpression {
     switch (this.current!.type) {
       case 'lbracket':
+        const token = this.current;
+        const index = this.parse(Precedence.lowest);
+        if (this.peek!.type === 'rbracket') this.next();
         return <IndexExpression>{
-          token: this.current!,
+          token,
           left,
-          index: this.parse(Precedence.lowest),
+          index,
         };
+
       default:
         return {
           token: this.current!,
@@ -163,14 +167,12 @@ class Parser {
       throw new Error(`Could not parse expression at position ${this.lexer.position}, '${this.current!.literal}' is not a valid prefix`);
 
     let left = this.parsePrefixExpression(); 
-
     while (this.peek && precedence < this.peekPrecedence()) {
-      if (!this.peek.infix)
+      if (!this.peek!.infix)
         return left;
-
       this.next();
       left = <InfixExpression>this.parseInfixExpression(left); 
-    } 
+    }
 
     return left;
   }

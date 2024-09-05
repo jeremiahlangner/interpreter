@@ -39,7 +39,6 @@ export default class Evaluator {
     return this.evaluate(this.parser.parse());
   }
 
-  // TODO: Handle bracket notation
   private getDataByPath(path: string): any {
     const paths = path.split('.');
     let data = this.data;
@@ -51,16 +50,14 @@ export default class Evaluator {
   }
 
   private evaluate(exp?: Expression): any {
-    console.log(exp);
     if (!exp) return;
 
     if ((<IndexExpression>exp).index) {
       let data = this.evaluate((<IndexExpression>exp).left);
-      let index = this.evaluate((<IndexExpression>exp).index);
-      data = data[index];
-      return data;
+      const index = this.evaluate((<IndexExpression>exp).index);
+      return data[index];
     }
-
+      
     switch (exp.token.type) {
       case 'boolean':
       case 'string':
@@ -73,7 +70,6 @@ export default class Evaluator {
           );
       case 'ident':
         let value = this.getDataByPath(exp.token.literal);
-        if (typeof value === 'undefined') value = exp.token.literal;
         return value; 
     }
     

@@ -128,8 +128,8 @@ test('Evaluator should parse and evaluate assigned data, identifier, and index e
     assert.strictEqual(rather.eval('test1'), 1);
     assert.strictEqual(rather.eval('test2'), "string");
     assert.strictEqual(rather.eval('test3[1]'), true);
-    // assert.strictEqual(rather.eval('test3[2][0]'), 'test');
-    assert.strictEqual(rather.eval('test4[test5]'), 0);
+    assert.strictEqual(rather.eval('test3[2][0]'), 'test');
+    assert.strictEqual(rather.eval('test4["test5"]'), 0);
   });
 
   await t.test('Evaluator should parse JSON strings to data.', () => {

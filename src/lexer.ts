@@ -47,6 +47,7 @@ export default class Lexer {
           type: 'ident', 
           literal, 
           prefix: true,
+          infix: true,
         };
 
         token.literal = literal;
