@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'assert';
 import Evaluator from './eval';
 
-const rather = new Evaluator();
+let rather = new Evaluator();
 
 test('Evaluator should evaluate string, boolean, number, and list literals.', async t => {
   await t.test('The string "42" should evaluate to the number 42.', () => {
@@ -110,6 +110,31 @@ test('Evaluator should evaluate parenthetical expressions correctly.', async t =
     assert.strictEqual(rather.eval('(true)'), true);
     assert.strictEqual(rather.eval('(false)'), false);
     assert.strictEqual(rather.eval('([1])')[0], 1);
+  });
+
+  await t.test('Evaluator should evaluate parenthetical expressions before operators of lower precedence.', () => {
+    assert.strictEqual(rather.eval('(4 * 5) + 1'), 21);
+    assert.strictEqual(rather.eval('(4 + 5) * 2'), 18);
+  });
+
+  await t.test('Evaluator should evaluate nested parenthetical expressions.', () => {
+    assert.strictEqual(rather.eval('((4 * 5) - 1) + 1'), 20);
+  });
+});
+
+test('Evaluator should parse and evaluate assigned data, identifier, and index expressions.', async t => {
+  await t.test('Evaluator should evaluate data from path identifiers.', () => {
+    const rather = new Evaluator({ test1: 1, test2: "string", test3: [1, true, ['test']], test4: { test5: 0 } });
+    assert.strictEqual(rather.eval('test1'), 1);
+    assert.strictEqual(rather.eval('test2'), "string");
+    assert.strictEqual(rather.eval('test3[1]'), true);
+    // assert.strictEqual(rather.eval('test3[2][0]'), 'test');
+    assert.strictEqual(rather.eval('test4[test5]'), 0);
+  });
+
+  await t.test('Evaluator should parse JSON strings to data.', () => {
+    const rather = new Evaluator('{ "test1": "test" }');
+    assert.strictEqual(rather.eval('test1'), 'test');
   });
 });
 

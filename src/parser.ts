@@ -8,8 +8,10 @@ import { Token, Keyword, } from './token';
   compare: 3,
   sum: 4,
   product: 5,
-  prefix: 6,
-  postfix: 7,
+  exponent: 6,
+  prefix: 7,
+  postfix: 8,
+  index: 9,
 }
 
 // TODO: Adjust compare precedence.
@@ -27,12 +29,15 @@ const OperatorPrecedence = {
   '-': Precedence.sum,
   '/': Precedence.product,
   '*': Precedence.product,
+  '^': Precedence.exponent,
+  '[': Precedence.index,
 }
 
 type Expression = BaseExpression & Extract<
   LiteralExpression |
   PrefixExpression | 
-  InfixExpression, 
+  InfixExpression |
+  IndexExpression,
   { token: Token | Keyword }
 >;
 
@@ -53,6 +58,11 @@ interface InfixExpression extends BaseExpression {
   right: Expression, 
   operator: string,
   left: Expression,
+}
+
+interface IndexExpression extends BaseExpression {
+  left: Expression,
+  index: Expression,
 }
 
 /*
@@ -91,7 +101,7 @@ class Parser {
       case 'lparen':
         const exp = this.parse(Precedence.lowest);
         if (this.peek!.type == 'rparen') this.next();
-        return exp!;
+        return exp! as LiteralExpression | PrefixExpression;
       case 'lbracket':
         const token = this.current!;
         const value = [];
@@ -112,13 +122,22 @@ class Parser {
     };
   }
 
-  private parseInfixExpression(left: Expression): InfixExpression {
-    return {
-      token: this.current!,
-      left,
-      operator: this.current!.literal,
-      right: this.parse(OperatorPrecedence[this.current!.literal as keyof typeof OperatorPrecedence])!,
-    };
+  private parseInfixExpression(left: Expression): InfixExpression | IndexExpression {
+    switch (this.current!.type) {
+      case 'lbracket':
+        return <IndexExpression>{
+          token: this.current!,
+          left,
+          index: this.parse(Precedence.lowest),
+        };
+      default:
+        return {
+          token: this.current!,
+          left,
+          operator: this.current!.literal,
+          right: this.parse(OperatorPrecedence[this.current!.literal as keyof typeof OperatorPrecedence])!,
+        };
+    }
   }
 
   private next(expected?: Token | Keyword) {
@@ -150,7 +169,7 @@ class Parser {
         return left;
 
       this.next();
-      left = this.parseInfixExpression(left); 
+      left = <InfixExpression>this.parseInfixExpression(left); 
     } 
 
     return left;
@@ -163,4 +182,5 @@ export {
   LiteralExpression,
   PrefixExpression,
   InfixExpression,
+  IndexExpression,
 }

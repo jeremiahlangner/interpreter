@@ -3,6 +3,7 @@ import {
   PrefixExpression, 
   LiteralExpression, 
   InfixExpression,
+  IndexExpression,
   Parser,
 } from './parser';
 import Lexer from './lexer';
@@ -50,7 +51,15 @@ export default class Evaluator {
   }
 
   private evaluate(exp?: Expression): any {
+    console.log(exp);
     if (!exp) return;
+
+    if ((<IndexExpression>exp).index) {
+      let data = this.evaluate((<IndexExpression>exp).left);
+      let index = this.evaluate((<IndexExpression>exp).index);
+      data = data[index];
+      return data;
+    }
 
     switch (exp.token.type) {
       case 'boolean':
@@ -58,7 +67,10 @@ export default class Evaluator {
       case 'number':
         return (<LiteralExpression>exp).value;
       case 'lbracket':
-        return (<LiteralExpression>exp).value.map((e: Expression) => this.evaluate(e));
+        if ((<LiteralExpression>exp).value)
+          return (<LiteralExpression>exp).value.map(
+            (e: Expression) => this.evaluate(e)
+          );
       case 'ident':
         let value = this.getDataByPath(exp.token.literal);
         if (typeof value === 'undefined') value = exp.token.literal;

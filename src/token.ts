@@ -123,7 +123,7 @@ type ListLiteral = {
 
 const TokenMap: Record<string, Token> = {
   ',': { type: 'comma', literal: ',' },
-  '[': { type: 'lbracket', literal: '[', prefix: true },
+  '[': { type: 'lbracket', literal: '[', prefix: true, infix: true},
   ']': { type: 'rbracket', literal: ']' },
   '(': { type: 'lparen', literal: '(', prefix: true },
   ')': { type: 'rparen', literal: ')' },
