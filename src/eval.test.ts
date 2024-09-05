@@ -21,6 +21,10 @@ test('Evaluator should evaluate string, boolean, number, and list literals.', as
     assert.strictEqual(rather.eval('"this is a string"'), "this is a string");
   });
   
+  await t.test("The string 'this is a string' should evaluate to the string literal 'this is a string'.", () => {
+    assert.strictEqual(rather.eval("'this is a string'"), 'this is a string');
+  });
+  
   await t.test('The string "[1, "string", true]" should evaluate to the list literal [1, "string", true].', () => {
     const list = rather.eval('[1, "string", true]');
     assert.strictEqual(Array.isArray(list), true);

@@ -106,7 +106,7 @@ export default class Lexer {
     do {
       this.readChar();
     } while(this.ch !== mark && this.readPosition < this.input.length);
-    return this.input.slice(position + 1, this.ch == '"' ? this.position : this.readPosition);
+    return this.input.slice(position + 1, this.ch === mark ? this.position : this.readPosition);
   }
 
   private skipWs() {
