@@ -122,6 +122,18 @@ test('Evaluator should evaluate parenthetical expressions correctly.', async t =
   });
 });
 
+test('Evaluator should evaluate date strings as numbers.', async t => {
+  await t.test('Evaluator should evaluate dates from apparent date strings', () => {
+    assert.strictEqual((rather.eval('date("3/3/1988")') / 1e9).toFixed(), ((new Date('3/3/1988')).valueOf() / 1e9).toFixed());
+    assert.strictEqual((rather.eval('date("March 3, 1988")') / 1e9).toFixed(), ((new Date('March 3, 1988')).valueOf() / 1e9).toFixed());
+  });
+
+  await t.test('Evaluator should evaluate pre-specified relative dates', () => {
+    assert.strictEqual((rather.eval('date("now")') / 1e9).toFixed(), ((new Date()).valueOf() / 1e9).toFixed());
+    assert.strictEqual((rather.eval('date("today")') / 1e9).toFixed(), ((new Date()).valueOf() / 1e9).toFixed());
+  });
+});
+
 test('Evaluator should parse and evaluate assigned data, identifier, and index expressions.', async t => {
   await t.test('Evaluator should evaluate data from path identifiers.', () => {
     const rather = new Evaluator({ test1: 1, test2: "string", test3: [1, true, ['test']], test4: { test5: 0 } });
@@ -133,8 +145,10 @@ test('Evaluator should parse and evaluate assigned data, identifier, and index e
   });
 
   await t.test('Evaluator should parse JSON strings to data.', () => {
-    const rather = new Evaluator('{ "test1": "test" }');
+    let rather = new Evaluator('{ "test1": "test" }');
     assert.strictEqual(rather.eval('test1'), 'test');
+    rather = new Evaluator('bad json'); 
+    assert.strictEqual(rather.eval('test1'), undefined);
   });
 });
 

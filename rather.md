@@ -25,11 +25,15 @@ If data is passed as a string, it is first parsed into a JavaScript Object.
 
 Each instance of an evaluator may have a new data object supplied.
 
-Data paths are indicated by text values with dot notation.
+Data paths are indicated by text values with dot notation or bracket index
+syntax.
 
-Data paths may only include upper and lowercase letters, underscores, numbers,
-brackets (for list location references) and bracket indexes. Data paths must
-not include spaces.
+Data paths using dot notation  may only include upper and lowercase letters, 
+underscores, and numbers.
+
+Bracket indexes, except when referencing array indexes must be enclosed in 
+quoted strings. Data paths that start using bracket syntax must use bracket
+syntax consistently.
 
 Data paths may not start with numbers. (e.g. `1test_var` is not a valid path
 name.)
@@ -37,6 +41,8 @@ name.)
 ### Example
 ```
 some_root.some_SubRoot.someVar
+foo['bar'][0]['baz']
+
 ```
 
 The left-most name indicates the root of the data object.
@@ -177,8 +183,9 @@ Symbols correlate almost directly to punctuation in most languages.
 | [ | left bracket | Denotes the beginning of a list. |
 | ] | right bracket | Denotes the end of a list |
 | " | quote | Indicates the beginning or ending of a text value |
+| ' | quote | Indicates the beginning or ending of a text value |
 | ( | left parentheses | Indicates the beginning of a group of conditional statements. Signifies a group of conditions that must be evaluated prior to evaluation of an entire conditional statement. |
-| ( | right parentheses | Indicates the end of a group of conditional statements. Signifies a group of conditions that must be evaluated prior to evaluation of an entire conditional statement. |
+| ) | right parentheses | Indicates the end of a group of conditional statements. Signifies a group of conditions that must be evaluated prior to evaluation of an entire conditional statement. |
 | : | colon | When prefixing a text value indicates a reference to a named pre-defined rule or condition. |
 | - | minus | When prefixing a data path or number, the minus symbol will represent its negative value. |
 
@@ -206,11 +213,12 @@ better expressed through the use of rules.
 
 ### Strings
 
-When checking for equality, text values must be enclosed in double-quoted strings.
+When checking for equality, text values must be enclosed in quotes.
 
 Example
 ```
 "This is a string" = "This is a string"
+'This is a string' = 'This is a string'
 ```
 
 ### Numbers
