@@ -29,9 +29,9 @@ test('Evaluator should evaluate string, boolean, number, and list literals.', as
     const list = rather.eval('[1, "string", true]');
     assert.strictEqual(Array.isArray(list), true);
     assert.strictEqual(list.length, 3);
-    assert.strictEqual(list[0].value, 1);
-    assert.strictEqual(list[1].value, "string");
-    assert.strictEqual(list[2].value, true);
+    assert.strictEqual(list[0], 1);
+    assert.strictEqual(list[1], "string");
+    assert.strictEqual(list[2], true);
   });
 });
 
@@ -99,6 +99,17 @@ test('Evaluator should evaluate comparisons to boolean values.', async t => {
     assert.strictEqual(rather.eval('4 <= 5'), true);
     assert.strictEqual(rather.eval('5 >= 5'), true);
     assert.strictEqual(rather.eval('5 >= 4'), true);
+  });
+});
+
+test('Evaluator should evaluate parenthetical expressions correctly.', async t => {
+  await t.test('Evaluator should evaluate literals contained in parentheses.', () => {
+    assert.strictEqual(rather.eval('(4)'), 4);
+    assert.strictEqual(rather.eval('("string")'), "string");
+    assert.strictEqual(rather.eval("('string')"), "string");
+    assert.strictEqual(rather.eval('(true)'), true);
+    assert.strictEqual(rather.eval('(false)'), false);
+    assert.strictEqual(rather.eval('([1])')[0], 1);
   });
 });
 

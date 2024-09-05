@@ -93,6 +93,7 @@ class Parser {
         if (this.peek!.type == 'rparen') this.next();
         return exp!;
       case 'lbracket':
+        const token = this.current!;
         const value = [];
         do {
           const exp = this.parse(Precedence.lowest);
@@ -100,7 +101,7 @@ class Parser {
           value.push(exp);
         } while (this.peek!.type !== 'rbracket');
         return {
-          token: this.current!,
+          token,
           value,
         };
     }

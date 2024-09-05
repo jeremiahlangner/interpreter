@@ -56,8 +56,9 @@ export default class Evaluator {
       case 'boolean':
       case 'string':
       case 'number':
-      case 'lbracket':
         return (<LiteralExpression>exp).value;
+      case 'lbracket':
+        return (<LiteralExpression>exp).value.map((e: Expression) => this.evaluate(e));
       case 'ident':
         let value = this.getDataByPath(exp.token.literal);
         if (typeof value === 'undefined') value = exp.token.literal;
