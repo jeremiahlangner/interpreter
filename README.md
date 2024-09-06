@@ -38,12 +38,13 @@ console.log(result); // logs 'true'
 
 ### Data and Rule Sets
 
-Add user specified data to the evaluation context. And reference the data in 
-expressions by dot-notated paths.
+Add user specified data to the evaluation context. Reference the data in 
+expressions using dot notation or bracket syntax.
 
 ```TypeScript
-const rather = new Rather({ some: 'foo', data: 'bar', here: 'baz' });
-const result = rather.eval('some == "foo"'); // returns true
+const rather = new Rather({ some: 'foo', data: 'bar', here: 'baz', a: { thing: 2 } });
+const result = rather.eval('some = "foo"'); // returns true
+const result1 = rather.eval('a["thing"] = 2'); // returns true
 ```
 
 
