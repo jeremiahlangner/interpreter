@@ -42,35 +42,33 @@ export default class Evaluator {
   private getDataByPath(path: string): any {
     const paths = path.split('.');
     let data = this.data;
-    for (const p of paths) {
-      if (typeof data === 'undefined') return;
-      data = data[p];
+    try {
+      for (const p of paths) {
+        if (typeof data === 'undefined') return;
+        data = data[p];
+      }
+      return data;
+    } catch (e) {
+      console.log('Failed to retrieve data at path', path, e);
+      return;
     }
-    return data;
   }
 
   private evaluate(exp?: Expression): any {
     if (!exp) return;
 
-    if ((<IndexExpression>exp).index) {
-      let data = this.evaluate((<IndexExpression>exp).left);
-      const index = this.evaluate((<IndexExpression>exp).index);
-      return data[index];
-    }
-      
     switch (exp.token.type) {
       case 'boolean':
       case 'string':
       case 'number':
         return (<LiteralExpression>exp).value;
+      case 'ident':
+        return this.getDataByPath(exp.token.literal);
       case 'lbracket':
         if ((<LiteralExpression>exp).value)
           return (<LiteralExpression>exp).value.map(
             (e: Expression) => this.evaluate(e)
           );
-      case 'ident':
-        let value = this.getDataByPath(exp.token.literal);
-        return value; 
     }
     
     if (!(<InfixExpression>exp).left) {
@@ -81,14 +79,11 @@ export default class Evaluator {
         return -this.evaluate((<PrefixExpression>exp).right);
       
       if ((<PrefixExpression>exp).operator === 'date') { 
-        const dateExp = this.evaluate((<PrefixExpression>exp).right);
-        
-        // Add some "Plain English" date values.
+        let dateExp = this.evaluate((<PrefixExpression>exp).right);
         if (typeof dateExp === 'string') {
-          if (dateExp === 'today') return new Date(new Date().toLocaleDateString()).valueOf();
-          if (dateExp === 'now') return new Date().valueOf();
+          if (dateExp === 'today') dateExp = new Date().toLocaleDateString();
+          if (dateExp === 'now') dateExp = new Date().toString();
         }
-
         return new Date(dateExp).valueOf();
       }
 
@@ -113,6 +108,12 @@ export default class Evaluator {
       }
     }
 
+    if ((<IndexExpression>exp).index) {
+      const data = this.evaluate((<IndexExpression>exp).left);
+      const index = this.evaluate((<IndexExpression>exp).index);
+      return data[index];
+    }
+      
     const left = this.evaluate((<InfixExpression>exp).left);
     const right = this.evaluate((<InfixExpression>exp).right);
     const operator = (<InfixExpression>exp).operator;

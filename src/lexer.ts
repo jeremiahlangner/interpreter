@@ -19,51 +19,56 @@ export default class Lexer {
 
     this.skipWs();
 
-    if (this.ch in TokenMap) {
-      const ch = this.peek();
-      if (`${this.ch}${ch}` in TokenMap) {
-        const position = this.position;
-        this.readChar();
-        token = TokenMap[this.input.slice(position, this.position + 1)];
-      } else {
-        token = TokenMap[this.ch];
-      }
-    } else if (this.ch === '') {
-      return;
-    } else if (this.ch === '"' || this.ch === "'") {
-      token = { 
-        type: 'string', 
-        literal: this.readString(this.ch), 
-        prefix: true 
-      };
-    } else if (letter(this.ch) && !digit(this.ch)) {
-      const ch = this.peek();
-      if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
-        const literal = this.readIdentifier();
-
-        if (KeywordMap[literal]) token = KeywordMap[literal];
-
-        if (!token) token = { 
-          type: 'ident', 
-          literal, 
-          prefix: true,
-          infix: true,
+    console.log('character is', this.ch);
+    switch (this.ch) {
+      case '':
+        return;
+      case "'":
+      case '"':
+        token = {
+          type: 'string',
+          literal: this.readString(this.ch),
+          prefix: true
         };
-
-        token.literal = literal;
-      }
-    } else if (digit(this.ch)) {
-      const ch = this.peek();
-      if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
-        token = { 
-          type: 'number', 
-          literal: this.readNumber(),
-          prefix: true,
-        };
-      }
-    } else {
-      console.error(`Syntax Error at position ${this.position} - Unrecognized character '${this.ch}'.`);
-      return;
+        break;
+      default:
+        const ch = this.peek();
+        if (this.ch in TokenMap) {
+          if (`${this.ch}${ch}` in TokenMap) {
+            const position = this.position;
+            this.readChar();
+            token = TokenMap[this.input.slice(position, this.position + 1)];
+          } else {
+            token = TokenMap[this.ch];
+          }
+        } else if (letter(this.ch) && !digit(this.ch)) {
+          if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
+            const literal = this.readIdentifier();
+            if (KeywordMap[literal]) {
+              token = KeywordMap[literal];
+            } else {
+              token = {
+                type: 'ident',
+                literal,
+                prefix: true,
+                infix: true,
+              };
+            }
+            token.literal = literal;
+          }
+        } else if (digit(this.ch)) {
+          if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
+            token = {
+              type: 'number',
+              literal: this.readNumber(),
+              prefix: true,
+            };
+          }
+        } else {
+          console.error(`Syntax Error at position ${this.position} - Unrecognized character '${this.ch}'.`);
+          return;
+        }
+        break;
     }
 
     this.readChar();
@@ -85,10 +90,10 @@ export default class Lexer {
     while (letter(this.ch)) {
       this.readChar();
     }
-    const ident = this.input.slice(position, this.position); 
+    const ident = this.input.slice(position, this.position);
     this.position--;
     this.readPosition--;
-    return ident; 
+    return ident;
   }
 
   private readNumber(): string {
@@ -106,7 +111,7 @@ export default class Lexer {
     const position = this.position;
     do {
       this.readChar();
-    } while(this.ch !== mark && this.readPosition < this.input.length);
+    } while (this.ch !== mark && this.readPosition < this.input.length);
     return this.input.slice(position + 1, this.ch === mark ? this.position : this.readPosition);
   }
 
@@ -126,14 +131,14 @@ export default class Lexer {
 }
 
 function ws(ch: string): boolean {
-  return ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r' ;
+  return ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r';
 }
 
 function letter(ch: string): boolean {
-  return ('a' <= ch && ch <= 'z') || 
-    ('A' <= ch && ch <= 'Z') || 
+  return ('a' <= ch && ch <= 'z') ||
+    ('A' <= ch && ch <= 'Z') ||
     ('0' <= ch && ch <= '9') ||
-    ch === '_' || 
+    ch === '_' ||
     ch === '.'
 }
 
