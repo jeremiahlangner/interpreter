@@ -152,3 +152,12 @@ test('Evaluator should parse and evaluate assigned data, identifier, and index e
   });
 });
 
+test('Evaluator should evaluate and reference rules assigned in a ruleset.', async t => {
+  await t.test('Evaluator should parse JSON string rules.', () => {
+    const rather = new Evaluator({test: 'data'}, '{"test": "true", "test1": "(4 + 5) >= 9", "test2": ":test + \'string\'"}');
+    assert.strictEqual(rather.eval(':test'), true);
+    assert.strictEqual(rather.eval(':test1'), true);
+    assert.strictEqual(rather.eval(':test2'), 'truestring');
+  });
+});
+
