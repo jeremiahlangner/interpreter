@@ -19,7 +19,6 @@ export default class Lexer {
 
     this.skipWs();
 
-    console.log('character is', this.ch);
     switch (this.ch) {
       case '':
         return;
@@ -54,7 +53,6 @@ export default class Lexer {
                 infix: true,
               };
             }
-            token.literal = literal;
           }
         } else if (digit(this.ch)) {
           if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
