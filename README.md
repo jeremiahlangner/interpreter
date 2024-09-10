@@ -95,14 +95,16 @@ and type the following command at the repl prompt:
 
 ## Unit Tests
 
+Unit tests use Node.js's native test runner from Node.js 22 or later to report
+coverage.
+
 Run the test suite using the following command:
 
 ```bash
 npm test
 ```
 
-
 ## Acknowledgements
 
-Much of the code here is produced with reference to Robert Nystrom's Crafting
-Interpreters and Thorsten Ball's Writing an Interpreter in Go.
+Much of the code here is produced with reference to Robert Nystrom's *Crafting
+Interpreters* and Thorsten Ball's *Writing an Interpreter in Go*.
