@@ -58,6 +58,14 @@ const rather = new Rather(
 const result = rather.eval(':rule1 and :rule2'); // returns true
 ```
 
+Rules and data are public properties. Set them to your desired objects without
+creating a new instance.
+
+```TypeScript
+rather.rules = { rule1: 'not (some = data)', rule2: ':rule1 and (here = "baz")' };
+rather.data = { here: "is", some: "data" };
+```
+
 ### Repl
 
 Rather comes packaged with a basic repl to test and evaluate expressions.
