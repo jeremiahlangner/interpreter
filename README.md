@@ -106,5 +106,6 @@ npm test
 
 ## Acknowledgements
 
-Much of the code here is produced with reference to Robert Nystrom's *Crafting
-Interpreters* and Thorsten Ball's *Writing an Interpreter in Go*.
+Much of the code here is produced with reference to Robert Nystrom's *[Crafting
+Interpreters](https://craftinginterpreters.com/)* and Thorsten Ball's 
+*[Writing an Interpreter in Go](https://interpreterbook.com/)*.
