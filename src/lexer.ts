@@ -20,18 +20,18 @@ export default class Lexer {
     this.skipWs();
 
     const ch = this.peek();
-    switch (this.ch) {
-      case '':
+    switch (true) {
+      case this.ch === '':
         return;
-      case "'":
-      case '"':
+      case this.ch === "'":
+      case this.ch === '"':
         token = {
           type: 'string',
           literal: this.readString(this.ch),
           prefix: true
         };
         break;
-      case (this.ch in TokenMap) ? this.ch : null:
+      case (this.ch in TokenMap):
         if (`${this.ch}${ch}` in TokenMap) {
           const position = this.position;
           this.readChar();
@@ -40,7 +40,7 @@ export default class Lexer {
           token = TokenMap[this.ch];
         }
         break;
-      case (letter(this.ch) && !digit(this.ch)) ? this.ch : null:
+      case letter(this.ch) && !digit(this.ch):
         if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
           const literal = this.readIdentifier();
           if (KeywordMap[literal]) {
@@ -55,7 +55,7 @@ export default class Lexer {
           }
         }
         break;
-      case (digit(this.ch)) ? this.ch : null:
+      case digit(this.ch):
         if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
           token = {
             type: 'number',
