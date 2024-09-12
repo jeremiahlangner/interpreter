@@ -61,6 +61,7 @@ export default class Evaluator {
       case 'boolean':
       case 'string':
       case 'number':
+      case 'question':
         return (<LiteralExpression>exp).value;
       case 'ident':
         return this.getDataByPath(exp.token.literal);
@@ -111,12 +112,25 @@ export default class Evaluator {
     if ((<IndexExpression>exp).index) {
       const data = this.evaluate((<IndexExpression>exp).left);
       const index = this.evaluate((<IndexExpression>exp).index);
-      return data[index];
+      
+      if (data?._indices || index === '?') {
+        console.log(data, index);
+        const _indices = data._indices ? [...data._indices, index] : [index];
+        return {
+          data: data.data || data,
+          _indices
+        };
+      }
+
+      return data ? data[index]: undefined;
     }
       
-    const left = this.evaluate((<InfixExpression>exp).left);
-    const right = this.evaluate((<InfixExpression>exp).right);
+    let left = this.evaluate((<InfixExpression>exp).left);
+    let right = this.evaluate((<InfixExpression>exp).right);
     const operator = (<InfixExpression>exp).operator;
+
+    if (left && left._indices) left = getValues(left);
+    if (right && right._indices) right = getValues(right);
 
     return {
       '+': left + right,
@@ -127,10 +141,34 @@ export default class Evaluator {
       '<': left < right,
       '>=': left >= right,
       '<=': left <= right,
-      '=': left == right,
-      'in': right.includes ? right.includes(left) : false,
+      '=': Array.isArray(left) ? left.includes(right) : left === right,
+      'in': right && right.includes ? right.includes(left) : false,
       'and': left && right,
       'or': left || right,
     }[operator];
   }
+}
+
+function getValues(value: { data: any, _indices: any[] }) {
+  let data = value.data;
+  let j = 0;
+  let i = value._indices[j];
+  
+  while (i && i !== '?' && data) {
+    j++;
+    data = data[i];
+    i = value._indices[j];
+  }
+
+  if (i === '?') {
+    let list = [];
+    for (const idx in data) {
+      const tmpData: any = getValues({ data: data[idx], _indices: value._indices.slice(j+1) });
+      if (tmpData) list.push(tmpData);
+    }
+    console.log(list);
+    if (list.length > 0) data = list;
+  }
+
+  return data;
 }

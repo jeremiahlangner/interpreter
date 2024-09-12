@@ -136,13 +136,17 @@ test('Evaluator should evaluate date strings as numbers.', async t => {
 
 test('Evaluator should parse and evaluate assigned data, identifier, and index expressions.', async t => {
   await t.test('Evaluator should evaluate data from path identifiers.', () => {
-    const rather = new Evaluator({ test1: 1, test2: "string", test3: [1, true, ['test']], test4: { test5: 0 } });
+    let rather = new Evaluator({ test1: 1, test2: "string", test3: [1, true, ['test']], test4: { test5: 0 } });
     assert.strictEqual(rather.eval('test1'), 1);
     assert.strictEqual(rather.eval('test2'), "string");
     assert.strictEqual(rather.eval('test3[1]'), true);
     assert.strictEqual(rather.eval('test3[2][0]'), 'test');
     assert.strictEqual(rather.eval('test4["test5"]'), 0);
     assert.strictEqual(rather.eval('test4.test6'), undefined);
+    rather.data = { five: { a: [1,2,3,{ b: 'foo'},{ b: 'bar'} ] } };
+    assert.strictEqual(rather.eval('five["a"][?]["b"] = "foo"'), true);
+    assert.strictEqual(rather.eval('five["a"][?]["b"] = "bar"'), true);
+    assert.strictEqual(rather.eval('five["a"][?]["b"] = "baz"'), false);
   });
 
   await t.test('Evaluator should parse JSON strings to data.', () => {

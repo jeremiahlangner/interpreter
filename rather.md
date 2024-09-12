@@ -48,16 +48,16 @@ foo['bar'][0]['baz']
 The left-most name indicates the root of the data object.
 
 Lists are represented with bracket notation. The brackets may include a number
-to indicate an item at a specific location in a list or be empty to reference
-a current item in an iteration.
+to indicate an item at a specific location in a list. Rather interprets a
+question mark within brackets to find an object with any keys following.
 
 Lists are 0-indexed. (The first item starts at index 0, the second and 1, and 
 so on.)
 
 ### Example
 ```
-some_list.[3].someVar  <-- Represents someVar of the fourth item in some_list.
-some_list.[].someVar <-- Represents someVar of the current item in an iteration of some_list.
+some_list[3]['someVar']  <-- Represents someVar of the fourth item in some_list.
+some_list[?]['someVar'] <-- Represents a list of all values of someVar for objects in a list.
 ```
 
 ## Syntax

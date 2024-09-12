@@ -1,5 +1,6 @@
 type Token = BaseToken & Extract<
   CommaToken |  
+  QuestionToken |
   LBracketToken |
   RBracketToken |
   LParenToken | 
@@ -29,6 +30,11 @@ type BaseToken = {
 type CommaToken = { 
   type: 'comma', 
   literal: ',' 
+};
+
+type QuestionToken = { 
+  type: 'question', 
+  literal: '?' 
 };
 
 type LBracketToken = { 
@@ -137,6 +143,7 @@ const TokenMap: Record<string, Token> = {
   '<=': { type: 'lessthanorequal', literal: '<=', infix: true },
   '*': { type: 'multiply', literal: '*', infix: true },
   '/': { type: 'divide', literal: '/', infix: true },
+  '?': { type: 'question', literal: '?', prefix: true },
 };
 
 type Keyword = BaseKeyword & Extract<

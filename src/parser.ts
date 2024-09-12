@@ -84,6 +84,7 @@ class Parser {
     switch (this.current!.type) {
       case 'ident': 
       case 'string':
+      case 'question':
         return {
           token: this.current!,
           value: this.current!.literal,
@@ -133,7 +134,6 @@ class Parser {
           left,
           index,
         };
-
       default:
         return {
           token: this.current!,
