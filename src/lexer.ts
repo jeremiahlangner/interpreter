@@ -19,6 +19,7 @@ export default class Lexer {
 
     this.skipWs();
 
+    const ch = this.peek();
     switch (this.ch) {
       case '':
         return;
@@ -30,42 +31,41 @@ export default class Lexer {
           prefix: true
         };
         break;
-      default:
-        const ch = this.peek();
-        if (this.ch in TokenMap) {
-          if (`${this.ch}${ch}` in TokenMap) {
-            const position = this.position;
-            this.readChar();
-            token = TokenMap[this.input.slice(position, this.position + 1)];
+      case (this.ch in TokenMap) ? this.ch : null:
+        if (`${this.ch}${ch}` in TokenMap) {
+          const position = this.position;
+          this.readChar();
+          token = TokenMap[this.input.slice(position, this.position + 1)];
+        } else {
+          token = TokenMap[this.ch];
+        }
+        break;
+      case (letter(this.ch) && !digit(this.ch)) ? this.ch : null:
+        if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
+          const literal = this.readIdentifier();
+          if (KeywordMap[literal]) {
+            token = KeywordMap[literal];
           } else {
-            token = TokenMap[this.ch];
-          }
-        } else if (letter(this.ch) && !digit(this.ch)) {
-          if (letter(ch as string) || ws(ch as string) || typeof ch === 'undefined') {
-            const literal = this.readIdentifier();
-            if (KeywordMap[literal]) {
-              token = KeywordMap[literal];
-            } else {
-              token = {
-                type: 'ident',
-                literal,
-                prefix: true,
-                infix: true,
-              };
-            }
-          }
-        } else if (digit(this.ch)) {
-          if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
             token = {
-              type: 'number',
-              literal: this.readNumber(),
+              type: 'ident',
+              literal,
               prefix: true,
+              infix: true,
             };
           }
-        } else {
-          console.error(`Syntax Error at position ${this.position} - Unrecognized character '${this.ch}'.`);
-          return;
         }
+        break;
+      case (digit(this.ch)) ? this.ch : null:
+        if (digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined') {
+          token = {
+            type: 'number',
+            literal: this.readNumber(),
+            prefix: true,
+          };
+        }
+        break;
+      default: 
+        console.error(`Syntax Error at position ${this.position} - Unrecognized character '${this.ch}'.`);
         break;
     }
 
