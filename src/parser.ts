@@ -115,12 +115,13 @@ class Parser {
           token,
           value,
         };
+      default:
+        return {
+          token: this.current!,
+          operator: this.current!.literal,
+          right: this.parse(Precedence.prefix)!
+        };
     }
-    return {
-      token: this.current!,
-      operator: this.current!.literal,
-      right: this.parse(Precedence.prefix)!
-    };
   }
 
   private parseInfixExpression(left: Expression): InfixExpression | IndexExpression {
