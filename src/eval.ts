@@ -54,6 +54,26 @@ export default class Evaluator {
     }
   }
 
+  /*
+    * refactor 
+  private reevaluate(exp: Expression): any {
+    switch (true) {
+      case exp.token.type === 'boolean':
+      case exp.token.type === 'string':
+      case exp.token.type === 'number':
+      case exp.token.type === 'question':
+        return (<LiteralExpression>exp).value;
+      case exp.token.type === 'ident':
+        return this.getDataByPath(exp.token.literal);
+      case exp.token.type === 'lbracket':
+        if ((<LiteralExpression>exp).value)
+          return (<LiteralExpression>exp).value.map(
+            (e: Expression) => this.evaluate(e)
+          );
+    }
+  }
+  */
+
   private evaluate(exp?: Expression): any {
     if (!exp) return;
 
