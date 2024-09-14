@@ -147,6 +147,7 @@ const TokenMap: Record<string, Token> = {
 };
 
 type Keyword = BaseKeyword & Extract<
+  FindKeyword |
   DateKeyword |
   AndKeyword |
   NotKeyword |
@@ -165,6 +166,11 @@ type BaseKeyword = {
 type DateKeyword = {
   type: 'date',
   literal: 'date',
+}
+
+type FindKeyword = {
+  type: 'find',
+  literal: 'find',
 }
 
 type AndKeyword = { 
@@ -205,6 +211,7 @@ const KeywordMap: Record<string, Keyword> = {
   'true': { type: 'boolean', literal: 'true', prefix: true },
   'false': { type: 'boolean', literal: 'false', prefix: true },
   'date': { type: 'date', literal: 'date', prefix: true, },
+  'find': { type: 'find', literal: 'find', prefix: true, },
 };
 
 export { Keyword, Token, KeywordMap, TokenMap };
