@@ -85,6 +85,12 @@ export default class Evaluator {
         return (<LiteralExpression>exp).value;
       case 'ident':
         return this.getDataByPath(exp.token.literal);
+      case 'lparen':
+        if ((<LiteralExpression>exp).value.length > 1) 
+          return (<LiteralExpression>exp).value.map(
+            (e: Expression) => this.evaluate(e)
+          );
+        return this.evaluate((<LiteralExpression>exp).value[0]);
       case 'lbracket':
         if ((<LiteralExpression>exp).value)
           return (<LiteralExpression>exp).value.map(
@@ -108,22 +114,36 @@ export default class Evaluator {
         return new Date(dateExp).valueOf();
       }
 
+      // conditionally find object in array
+      if ((<PrefixExpression>exp).operator === 'find') { 
+        let obj = this.evaluate((<LiteralExpression>(<PrefixExpression>exp).right).value[0]);
+        const e = new Evaluator();
+        for (const o of obj) {
+          e.data = o;
+          console.log('object is', o);
+          console.log('expression is', (<LiteralExpression>(<PrefixExpression>exp).right).value[1]);
+          console.log('evaluation is', e.evaluate((<LiteralExpression>(<PrefixExpression>exp).right).value[1]));
+          if (e.evaluate((<LiteralExpression>(<PrefixExpression>exp).right).value[1])) return true;
+        }
+        return false;
+      }
+
       if ((<PrefixExpression>exp).operator === ':') {
         let rule;
 
         // Get cached rule if available.
-        if (this._rules[((<PrefixExpression>exp).right as LiteralExpression).value])
-          rule = this._rules[((<PrefixExpression>exp).right as LiteralExpression).value];
+        if (this._rules[(<LiteralExpression>(<PrefixExpression>exp).right).value])
+          rule = this._rules[(<LiteralExpression>(<PrefixExpression>exp).right).value];
 
         // Return rule as string if does not exist.
-        if (!this.rules[((<PrefixExpression>exp).right as LiteralExpression).value as keyof typeof this.rules])
-          return ((<PrefixExpression>exp).right as LiteralExpression).value;
+        if (!this.rules[(<LiteralExpression>(<PrefixExpression>exp).right).value as keyof typeof this.rules])
+          return (<LiteralExpression>(<PrefixExpression>exp).right).value;
 
         // If rule exists in rule set, lex and parse the rule. Cache it for later use.
         if (!rule) {
-          this.lexer.lex(this.rules[((<PrefixExpression>exp).right as LiteralExpression).value as keyof typeof this.rules]);
-          this._rules[((<PrefixExpression>exp).right as LiteralExpression).value] = this.parser.parse()!;
-          rule = this._rules[((<PrefixExpression>exp).right as LiteralExpression).value];
+          this.lexer.lex(this.rules[(<LiteralExpression>(<PrefixExpression>exp).right).value as keyof typeof this.rules]);
+          this._rules[(<LiteralExpression>(<PrefixExpression>exp).right).value] = this.parser.parse()!;
+          rule = this._rules[(<LiteralExpression>(<PrefixExpression>exp).right).value];
         }
         return this.evaluate(rule);
       }
@@ -134,7 +154,6 @@ export default class Evaluator {
       const index = this.evaluate((<IndexExpression>exp).index);
       
       if (data?._indices || index === '?') {
-        console.log(data, index);
         const _indices = data._indices ? [...data._indices, index] : [index];
         return {
           data: data.data || data,
@@ -167,6 +186,10 @@ export default class Evaluator {
       'or': left || right,
     }[operator];
   }
+
+  find(exp: PrefixExpression) {
+     
+  }
 }
 
 function getValues(value: { data: any, _indices: any[] }) {
@@ -186,7 +209,6 @@ function getValues(value: { data: any, _indices: any[] }) {
       const tmpData: any = getValues({ data: data[idx], _indices: value._indices.slice(j+1) });
       if (tmpData) list.push(tmpData);
     }
-    console.log(list);
     if (list.length > 0) data = list;
   }
 

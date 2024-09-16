@@ -4,7 +4,7 @@ import { Token, Keyword, } from './token';
  const Precedence = {
   none: 0,
   lowest: 1,
-  equals: 2,
+  conjoin: 2,
   compare: 3,
   sum: 4,
   product: 5,
@@ -16,15 +16,15 @@ import { Token, Keyword, } from './token';
 
 // TODO: Adjust compare precedence.
 const OperatorPrecedence = {
-  '=': Precedence.equals,
-  '!=': Precedence.equals,
+  '=': Precedence.compare,
+  '!=': Precedence.compare,
   '<': Precedence.compare,
   '>': Precedence.compare,
   '<=': Precedence.compare,
   '>=': Precedence.compare,
-  'in': Precedence.compare,
-  'and': Precedence.compare,
-  'or': Precedence.compare,
+  'in': Precedence.conjoin,
+  'and': Precedence.conjoin,
+  'or': Precedence.conjoin,
   '+': Precedence.sum,
   '-': Precedence.sum,
   '/': Precedence.product,
@@ -99,22 +99,34 @@ class Parser {
           token: this.current!,
           value: this.current!.literal === 'true' ? true : false,
         };
-      case 'lparen':
-        const exp = this.parse(Precedence.lowest);
-        if (this.peek!.type == 'rparen') this.next();
-        return exp! as LiteralExpression | PrefixExpression;
-      case 'lbracket':
-        const token = this.current!;
-        const value = [];
-        do {
-          const exp = this.parse(Precedence.lowest);
-          if (this.peek!.type == 'comma') this.next();
-          value.push(exp);
-        } while (this.peek!.type !== 'rbracket');
-        return {
-          token,
-          value,
-        };
+      case 'lparen': {
+          const token = this.current!;
+          const value = [];
+          do {
+            const exp = this.parse(Precedence.lowest);
+            if (this.peek!.type == 'comma') this.next();
+            value.push(exp); 
+          } while (this.peek!.type !== 'rparen');
+          this.next();
+          return { 
+            token,
+            value
+          };
+        }
+      case 'lbracket': {
+          const token = this.current!;
+          const value = [];
+          do {
+            const exp = this.parse(Precedence.lowest);
+            if (this.peek!.type == 'comma') this.next();
+            value.push(exp);
+          } while (this.peek!.type !== 'rbracket');
+          this.next();
+          return {
+            token,
+            value,
+          };
+        }
       default:
         return {
           token: this.current!,
