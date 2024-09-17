@@ -105,6 +105,7 @@ statement.
 
 |Keyword|Name|Description|
 |---|---|---|
+| $ | root | Represents the root level value of the data in the Evaluator. |
 | and | and | Joins two or more conditional statements and requires all to be true to satisfy a logical condition. |
 | or | or | Represents a logical or condition among two or more conditional statements. |
 | not| not | Indicates a negation of a condition or statement. |
@@ -175,18 +176,35 @@ date(1724952644000 + (60 * 60 * 1000)) <-- use numeric values for larger time in
 
 #### Find
 
-Check for the existence of objects matching expressions in arrays.
+Check for the existence of objects or data values  matching expressions.
 
-Find receives two arguments. 1. A list that may or may not contain an object
-matching an expression, and 2. An expression to determine whether an object in
-an array can be matched.
+A `find` function must include two arguments. 1. A list that may or may not contain an object
+matching an expression, and 2. a matching expression.
 
-Find returns `true` for the first object found matching the expression.
+Find can evaluate lists, objects, and strings. 
+
+For strings `find` matches individual characters against the expression argument.
+
+For lists `find` matches against each list value. `find` may be read as 'return
+true if an item in a list matches the expression argument'.
+
+For object `find` matches against the values of each key. `find` may be read as 
+'return true if the value of a key matches the expression';
+
+`find` returns `true` for only the first object found matching the expression argument.
+
+The properties referenced in the expression argument are rooted to the object
+under consideration. For example, for the list `[ { foo: 'bar'}, { bar: 'baz' } ]`
+The expression can reference the properties `foo` and `bar` directly, rather
+than using index notation for the lists.
+
+In the following example, some_list = [ { property_1: 'foo', property_2: 'bar'} ].
 
 Example
 ```
 find(some_list, property_1 = 'foo' and property_2 = 'bar') <-- returns `true` if an object in some_list has the properties property_1 equal to 'foo' and property_2 equal to 'bar'
 ```
+
 
 ### Symbols
 
