@@ -99,6 +99,11 @@ class Parser {
           token: this.current!,
           value: this.current!.literal === 'true' ? true : false,
         };
+      case 'root':
+        return {
+          token: this.current!,
+          value: this.current!.literal,
+        };
       case 'lparen': {
           const token = this.current!;
           const value = [];

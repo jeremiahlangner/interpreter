@@ -141,6 +141,15 @@ test('Evaluator should find objects using comparative expressions', async t => {
     assert.strictEqual(rather.eval('find(obj, foo = "bar")'), true);
     assert.strictEqual(rather.eval('find(obj, foo = "bar" and baz = "lur")'), true);
     assert.strictEqual(rather.eval('find(obj, (foo = "bar") and (baz = "test"))'), false);
+    rather.data = { obj: [ 'foo', 'bar', 'baz' ] };
+    assert.strictEqual(rather.eval('find(obj, $ = "foo")'), true);
+    assert.strictEqual(rather.eval('find(obj, $ = "baz")'), true);
+    assert.strictEqual(rather.eval('find(obj, $ = "not a value")'), false);
+    rather.data = { foo: 'bar', bar: 'baz', baz: true };
+    assert.strictEqual(rather.eval('find($, $ = true)'), true);
+    assert.strictEqual(rather.eval('find($, $ = "bar")'), true);
+    assert.strictEqual(rather.eval('find($, $ = "baz")'), true);
+    assert.strictEqual(rather.eval('find($, $ = false)'), false);
   });
 });
 

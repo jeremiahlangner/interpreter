@@ -112,6 +112,7 @@ statement.
 | true | true | Indicates a truthy condition. |
 | false | false | Indicates a truthy condition. |
 | date | date | Allows for assignment of date values. (See examples for more information.) |
+| find | find | Allows one to conditionally evaluate an item from a list |
 
 #### A note about "not"
 
@@ -172,10 +173,24 @@ date(1724952644000 + (60 * 60 * 1000)) <-- use numeric values for larger time in
 
 ```
 
+#### Find
+
+Check for the existence of objects matching expressions in arrays.
+
+Find receives two arguments. 1. A list that may or may not contain an object
+matching an expression, and 2. An expression to determine whether an object in
+an array can be matched.
+
+Find returns `true` for the first object found matching the expression.
+
+Example
+```
+find(some_list, property_1 = 'foo' and property_2 = 'bar') <-- returns `true` if an object in some_list has the properties property_1 equal to 'foo' and property_2 equal to 'bar'
+```
 
 ### Symbols
 
-Symbols correlate almost directly to punctuation in most languages. 
+Symbols correlate to punctuation in most languages. 
 
 |Symbol|Name|Description|
 |---|---|---|
@@ -184,7 +199,7 @@ Symbols correlate almost directly to punctuation in most languages.
 | ] | right bracket | Denotes the end of a list |
 | " | quote | Indicates the beginning or ending of a text value |
 | ' | quote | Indicates the beginning or ending of a text value |
-| ( | left parentheses | Indicates the beginning of a group of conditional statements. Signifies a group of conditions that must be evaluated prior to evaluation of an entire conditional statement. |
+| ( | left parentheses | Indicates the beginning of a group of conditional statements. Signifies a group of conditions that must be evaluated prior to evaluation of an entire conditional statement. Indicates the beginning of a comma separated list if longer than one item. |
 | ) | right parentheses | Indicates the end of a group of conditional statements. Signifies a group of conditions that must be evaluated prior to evaluation of an entire conditional statement. |
 | : | colon | When prefixing a text value indicates a reference to a named pre-defined rule or condition. |
 | - | minus | When prefixing a data path or number, the minus symbol will represent its negative value. |

@@ -85,6 +85,8 @@ export default class Evaluator {
         return (<LiteralExpression>exp).value;
       case 'ident':
         return this.getDataByPath(exp.token.literal);
+      case 'root':
+        return this.data;
       case 'lparen':
         if ((<LiteralExpression>exp).value.length > 1) 
           return (<LiteralExpression>exp).value.map(
@@ -114,15 +116,16 @@ export default class Evaluator {
         return new Date(dateExp).valueOf();
       }
 
-      // conditionally find object in array
       if ((<PrefixExpression>exp).operator === 'find') { 
-        let obj = this.evaluate((<LiteralExpression>(<PrefixExpression>exp).right).value[0]);
+        if (!(<LiteralExpression>(<PrefixExpression>exp).right).value[1]) {
+          console.log('Expression error. Expected 2 arguments for function "find".', exp);
+          return false;
+        }
+
+        const obj = this.evaluate((<LiteralExpression>(<PrefixExpression>exp).right).value[0]);
         const e = new Evaluator();
-        for (const o of obj) {
-          e.data = o;
-          console.log('object is', o);
-          console.log('expression is', (<LiteralExpression>(<PrefixExpression>exp).right).value[1]);
-          console.log('evaluation is', e.evaluate((<LiteralExpression>(<PrefixExpression>exp).right).value[1]));
+        for (const k in obj) {
+          e.data = obj[k];
           if (e.evaluate((<LiteralExpression>(<PrefixExpression>exp).right).value[1])) return true;
         }
         return false;
@@ -185,10 +188,6 @@ export default class Evaluator {
       'and': left && right,
       'or': left || right,
     }[operator];
-  }
-
-  find(exp: PrefixExpression) {
-     
   }
 }
 

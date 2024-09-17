@@ -1,5 +1,6 @@
 type Token = BaseToken & Extract<
   CommaToken |  
+  RootToken |
   QuestionToken |
   LBracketToken |
   RBracketToken |
@@ -25,6 +26,11 @@ type BaseToken = {
   literal: string,
   prefix?: boolean,
   infix?: boolean,
+};
+
+type RootToken = { 
+  type: 'root', 
+  literal: '$' 
 };
 
 type CommaToken = { 
@@ -144,6 +150,7 @@ const TokenMap: Record<string, Token> = {
   '*': { type: 'multiply', literal: '*', infix: true },
   '/': { type: 'divide', literal: '/', infix: true },
   '?': { type: 'question', literal: '?', prefix: true },
+  '$': { type: 'root', literal: '$', prefix: true },
 };
 
 type Keyword = BaseKeyword & Extract<
