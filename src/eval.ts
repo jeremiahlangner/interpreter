@@ -40,18 +40,18 @@ export default class Evaluator {
   }
 
   private getDataByPath(path: string): any {
+    if (!path) return;
+
     const paths = path.split('.');
+
+    if (!paths.length) return;
+
     let data = this.data;
-    try {
-      for (const p of paths) {
-        if (typeof data === 'undefined') return;
-        data = data[p];
-      }
-      return data;
-    } catch (e) {
-      console.log('Failed to retrieve data at path', path, e);
-      return;
+    for (const p of paths) {
+      if (typeof data === 'undefined') return;
+      data = data[p];
     }
+    return data;
   }
 
   /*

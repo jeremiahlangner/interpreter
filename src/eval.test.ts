@@ -4,6 +4,14 @@ import Evaluator from './eval';
 
 let rather = new Evaluator();
 
+test('Lexer should fail to generate tokens for invalid syntax', async t => {
+  await t.test('An unrecognized token should log an error and return no value.', () => {
+    assert.strictEqual(rather.eval(';'), undefined);
+    assert.strictEqual(rather.eval('!'), undefined);
+    assert.strictEqual(rather.eval('|'), undefined);
+  });
+});
+
 test('Evaluator should evaluate string, boolean, number, and list literals.', async t => {
   await t.test('The string "42" should evaluate to the number 42.', () => {
     assert.strictEqual(rather.eval('42'), 42);
@@ -110,6 +118,7 @@ test('Evaluator should evaluate parenthetical expressions correctly.', async t =
     assert.strictEqual(rather.eval('(true)'), true);
     assert.strictEqual(rather.eval('(false)'), false);
     assert.strictEqual(rather.eval('([1])')[0], 1);
+    assert.strictEqual(rather.eval('(1,2,3,4)')[0], 1);
   });
 
   await t.test('Evaluator should evaluate parenthetical expressions before operators of lower precedence.', () => {
@@ -129,6 +138,7 @@ test('Evaluator should evaluate date strings as numbers.', async t => {
   });
 
   await t.test('Evaluator should evaluate pre-specified relative dates', () => {
+    // TODO: do correct date math to find correct date ranges.
     assert.strictEqual((rather.eval('date("now")') / 1e9).toFixed(), ((new Date()).valueOf() / 1e9).toFixed());
     // assert.strictEqual((rather.eval('date("today")') / 1e9).toFixed(), ((new Date()).valueOf() / 1e9).toFixed());
   });
