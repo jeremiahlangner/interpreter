@@ -115,11 +115,11 @@ class Parser {
       case 'lbracket': {
           const token = this.current!;
           const value = [];
-          do {
+          while (this.peek!.type !== 'rbracket') {
             const exp = this.parse(Precedence.lowest);
             if (this.peek!.type == 'comma') this.next();
             value.push(exp);
-          } while (this.peek!.type !== 'rbracket');
+          } 
           this.next();
           return {
             token,
