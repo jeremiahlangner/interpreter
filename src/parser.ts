@@ -65,12 +65,6 @@ interface IndexExpression extends BaseExpression {
   index: Expression,
 }
 
-/*
-  A basic, simple Pratt parser implementation. Takes tokenized strings and parses
-  into a syntax tree. Only evaluates expressions.
-
-  TODO: Add error messages for expected tokens.
-*/
 class Parser {
   lexer: Lexer;
   current: Token | Keyword | undefined;
@@ -107,11 +101,11 @@ class Parser {
       case 'lparen': {
           const token = this.current!;
           const value = [];
-          do {
+          while (this.peek!.type !== 'rparen') {
             const exp = this.parse(Precedence.lowest);
             if (this.peek!.type == 'comma') this.next();
             value.push(exp); 
-          } while (this.peek!.type !== 'rparen');
+          } 
           this.next();
           return { 
             token,

@@ -135,7 +135,7 @@ test('Evaluator should evaluate date strings as numbers.', async t => {
 });
 
 test('Evaluator should find objects using comparative expressions', async t => {
-  await t.test('Evalutator should return true if true conditional.', () => {
+  await t.test('Evaluator should find values that match conditions and return true.', () => {
     rather.data = { obj: [ {foo: 'bar', baz: 'lur'}, {foo: 'bar'}, { foo: 'd'} ]};
     assert.strictEqual(rather.eval('find(obj, true)'), true);
     assert.strictEqual(rather.eval('find(obj, foo = "bar")'), true);
@@ -150,6 +150,11 @@ test('Evaluator should find objects using comparative expressions', async t => {
     assert.strictEqual(rather.eval('find($, $ = "bar")'), true);
     assert.strictEqual(rather.eval('find($, $ = "baz")'), true);
     assert.strictEqual(rather.eval('find($, $ = false)'), false);
+  });
+  
+  await t.test('Evalutator should return false for too few arguments for find.', () => {
+    assert.strictEqual(rather.eval('find()'), false);
+    assert.strictEqual(rather.eval('find($ = true)'), false);
   });
 });
 
