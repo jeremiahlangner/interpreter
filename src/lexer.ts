@@ -42,18 +42,14 @@ export default class Lexer {
         break;
       case letter(this.ch) && !digit(this.ch):
         if (!(letter(ch as string) || ws(ch as string) || typeof ch === 'undefined')) break; 
-        
         const literal = this.readIdentifier();
-        if (KeywordMap[literal]) {
-          token = KeywordMap[literal];
-        } else {
-          token = {
+        token = KeywordMap[literal] || 
+          {
             type: 'ident',
             literal,
             prefix: true,
             infix: true,
           };
-        }
         break;
       case digit(this.ch):
         if (!(digit(ch as string) || ws(ch as string) || (ch as string) in TokenMap || typeof ch === 'undefined')) break;
