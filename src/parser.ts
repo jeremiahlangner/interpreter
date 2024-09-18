@@ -79,6 +79,7 @@ class Parser {
       case 'ident': 
       case 'string':
       case 'question':
+      case 'root':
         return {
           token: this.current!,
           value: this.current!.literal,
@@ -92,11 +93,6 @@ class Parser {
         return {
           token: this.current!,
           value: this.current!.literal === 'true' ? true : false,
-        };
-      case 'root':
-        return {
-          token: this.current!,
-          value: this.current!.literal,
         };
       case 'lparen': 
       case 'lbracket': {
@@ -125,7 +121,7 @@ class Parser {
 
   private parseInfixExpression(left: Expression): InfixExpression | IndexExpression {
     switch (this.current!.type) {
-      case 'lbracket':
+      case 'lbracket': // Index Expressions
         const token = this.current;
         const index = this.parse(Precedence.lowest);
         if (this.peek!.type === 'rbracket') this.next();
