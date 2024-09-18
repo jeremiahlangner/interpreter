@@ -88,16 +88,15 @@ export default class Evaluator {
       case 'root':
         return this.data;
       case 'lparen':
-        if ((<LiteralExpression>exp).value.length > 1) 
-          return (<LiteralExpression>exp).value.map(
-            (e: Expression) => this.evaluate(e)
-          );
-        return this.evaluate((<LiteralExpression>exp).value[0]);
       case 'lbracket':
-        if ((<LiteralExpression>exp).value)
-          return (<LiteralExpression>exp).value.map(
+        let value = [];
+        if ((<LiteralExpression>exp).value) {
+          value = (<LiteralExpression>exp).value.map(
             (e: Expression) => this.evaluate(e)
           );
+          if (exp.token.type === 'lparen' && value.length <= 1) return value[0];
+          return value;
+        }
     }
     
     if (!(<InfixExpression>exp).left) {

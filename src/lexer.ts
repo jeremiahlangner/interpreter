@@ -64,7 +64,7 @@ export default class Lexer {
         };
         break;
       default: 
-        console.error(`Syntax Error at position ${this.position} - Unrecognized character '${this.ch}'.`);
+        console.error(`Syntax Error at position ${this.position} - Unhandled character '${this.ch}'.`);
         break;
     }
 
