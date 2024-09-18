@@ -95,21 +95,20 @@ class Parser {
           value: this.current!.literal === 'true' ? true : false,
         };
       case 'lparen': 
-      case 'lbracket': {
-          const token = this.current!;
-          const value = [];
-          const marker = token.type === 'lparen' ? 'rparen' : 'rbracket';
-          while (this.peek!.type !== marker) {
-            const exp = this.parse(Precedence.lowest);
-            if (this.peek!.type == 'comma') this.next();
-            value.push(exp);
-          } 
-          this.next();
-          return {
-            token,
-            value,
-          };
-        }
+      case 'lbracket':
+        const token = this.current!;
+        const value = [];
+        const marker = token.type === 'lparen' ? 'rparen' : 'rbracket';
+        while (this.peek!.type !== marker) {
+          const exp = this.parse(Precedence.lowest);
+          if (this.peek!.type == 'comma') this.next();
+          value.push(exp);
+        } 
+        this.next();
+        return {
+          token,
+          value,
+        };
       default:
         return {
           token: this.current!,
@@ -121,7 +120,7 @@ class Parser {
 
   private parseInfixExpression(left: Expression): InfixExpression | IndexExpression {
     switch (this.current!.type) {
-      case 'lbracket': // Index Expressions
+      case 'lbracket': // Index Expressions seem to be outliers.
         const token = this.current;
         const index = this.parse(Precedence.lowest);
         if (this.peek!.type === 'rbracket') this.next();
