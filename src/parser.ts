@@ -98,24 +98,12 @@ class Parser {
           token: this.current!,
           value: this.current!.literal,
         };
-      case 'lparen': {
-          const token = this.current!;
-          const value = [];
-          while (this.peek!.type !== 'rparen') {
-            const exp = this.parse(Precedence.lowest);
-            if (this.peek!.type == 'comma') this.next();
-            value.push(exp); 
-          } 
-          this.next();
-          return { 
-            token,
-            value
-          };
-        }
+      case 'lparen': 
       case 'lbracket': {
           const token = this.current!;
           const value = [];
-          while (this.peek!.type !== 'rbracket') {
+          const marker = token.type === 'lparen' ? 'rparen' : 'rbracket';
+          while (this.peek!.type !== marker) {
             const exp = this.parse(Precedence.lowest);
             if (this.peek!.type == 'comma') this.next();
             value.push(exp);
