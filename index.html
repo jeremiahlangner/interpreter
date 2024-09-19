@@ -1,1 +1,100 @@
-<input id="repl" />
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rather repl</title>
+    <style>
+      html {
+        display: flex;
+        flex-direction: column;
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        font-size: 16px;
+        padding: 16px;
+        width: 100%;
+      }
+      
+      #input {
+        display: flex;
+        flex-wrap: nowrap;
+        width: 100%;
+      }
+      
+      input {
+        border: none;
+        outline: none;
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        font-size: 16px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="output"></div>
+    <div id="input">
+    >>&nbsp;<input id="repl" autofocus/>
+    </div>
+    
+    <script type="importmap">
+      {
+        "imports": {
+          "./build/token": "./build/token.js",
+          "./build/lexer": "./build/lexer.js",
+          "./build/parser": "./build/parser.js",
+          "eval": "./build/eval.js"
+        }
+      }
+    </script>
+    
+    <script type="module">
+      import Rather from 'eval'; 
+
+      const input = document.querySelector('#repl');
+      const output = document.querySelector('#output');
+      
+      let data;
+      let rules;
+      let rather = new Rather(data, rules);
+      
+      input.focus();
+
+      document.addEventListener('keyup', e => {
+        if (e.key !== 'Enter') return;
+        const cmd = input.value;
+        
+        input.value = '';
+        input.textContent = '';
+
+        switch(true) {
+          case cmd.startsWith('repl.data = '):
+            const dprime = cmd.split('repl.data = ')[1]; 
+            try {
+              rather = new Rather(dprime, rules);
+              data = dprime;
+              output.innerHTML += 'Setting repl data to' + data + '<br>';
+            } catch {
+              output.innerHTML += 'Error: Failed to set repl data. <br>'; 
+            }
+            break;
+          case cmd.startsWith('repl.rules = '):
+            const rprime = cmd.split('repl.data = ')[1]; 
+            try {
+              rather = new Rather(data, rprime);
+              rules = rprime;
+              output.innerHTML += 'Setting repl rules to' + rules + '<br>';
+            } catch {
+              output.innerHTML += 'Error: Failed to set repl rules. <br>'; 
+            }
+            break;
+          default:
+            const result = rather.eval(cmd);
+            output.innerHTML += result + '<br>';
+            break;
+        }
+      });
+    </script>
+  </body>
+</html>
