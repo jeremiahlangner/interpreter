@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx tsx ./src/repl.ts",
     "test": "npx tsx --test --enable-source-maps --experimental-test-coverage",
-    "build": "npx esbuild ./src/*.ts --outdir=build --minify"
+    "build": "npx esbuild ./src/*.ts --outdir=build --minify",
+    "browser": "npm run build && npx http-server . -o"
   },
   "keywords": [],
   "author": "",
