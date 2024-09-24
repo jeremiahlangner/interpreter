@@ -92,6 +92,13 @@ and type the following command at the repl prompt:
 >> repl.data = <JSON string of data>
 ```
 
+A browser-based version of the repl is also available. To start the repl in 
+a browser window run the following command:
+
+```bash
+npm run browser
+```
+
 
 ## Unit Tests
 
